@@ -17,7 +17,7 @@ oc new-app -f https://raw.githubusercontent.com/Maistra/openshift-ansible/maistr
 echo "Waiting some minutes to deploy istio operator pod"
 sleep 120
 
-echo "Deploy Istio Definition Kiali and Auth"
+echo "Deploy Istio Definition without Kiali and Auth"
 cat <<EOF | oc create -n ${ISTIO_OPERATOR_NAMESPACE} -f -
 apiVersion: "istio.openshift.com/v1alpha1"
 kind: "Installation"
