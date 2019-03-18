@@ -19,16 +19,16 @@ export OS="linux" # osx | linux
 
 # Kiali
 export KIALI_VERSION=v0.14.0
-export SUBDOMAIN="$(minishift ip).nip.io"
-export NAMESPACE=istio-system
-export ISTIO_NAMESPACE=istio-system
 export IMAGE_NAME="${IMAGE_NAME:-kiali/kiali}"
 export IMAGE_VERSION="${IMAGE_VERSION:-$KIALI_VERSION}"
 export VERSION_LABEL="${VERSION_LABEL:-$IMAGE_VERSION}"
 export IMAGE_PULL_POLICY_TOKEN="${IMAGE_PULL_POLICY_TOKEN:-imagePullPolicy: Always}"
 export VERBOSE_MODE="${VERBOSE_MODE:-3}"
-export KIALI_USERNAME_BASE64
-export KIALI_PASSPHRASE_BASE64
+
+# Jaeger
+export JAEGER_VERSION=1.8.1
 
 # Microservices
 export MSA_PROJECT_NAME="coolstore"
+export MSA_GIT_URI="https://github.com/redhat-developer-adoption-emea/service-mesh-demo"
+export MSA_GIT_REF="master"
