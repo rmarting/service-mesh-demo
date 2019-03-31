@@ -45,6 +45,7 @@ export class ScenarioComponent implements OnInit {
         this.route.snapshot.data.command.title,
         this.route.snapshot.data.command.subTitle,
         this.route.snapshot.data.command.description,
+        this.route.snapshot.data.command.image,
         this.route.snapshot.data.command.actionText,
         this.route.snapshot.data.command.actionUrl
       );
@@ -54,6 +55,7 @@ export class ScenarioComponent implements OnInit {
           this.route.snapshot.data.break.title,
           this.route.snapshot.data.break.subTitle,
           this.route.snapshot.data.break.description,
+          this.route.snapshot.data.break.image,
           this.route.snapshot.data.break.actionText,
           this.route.snapshot.data.break.actionUrl
         );
@@ -63,6 +65,7 @@ export class ScenarioComponent implements OnInit {
           this.route.snapshot.data.fix.title,
           this.route.snapshot.data.fix.subTitle,
           this.route.snapshot.data.fix.description,
+          this.route.snapshot.data.fix.image,
           this.route.snapshot.data.fix.actionText,
           this.route.snapshot.data.fix.actionUrl
         );
@@ -102,18 +105,21 @@ class ActionCard {
   title: string;
   subTitle: string;
   description: string;
+  image: string;
   actionText: string;
   actionUrl: string;
   constructor(
     title: string,
     subTitle: string,
     description: string,
+    image: string,
     actionText: string,
     actionUrl: string
     ) {
       this.title = title;
       this.subTitle = subTitle;
       this.description = description;
+      this.image = image;
       this.actionText = actionText;
       this.actionUrl = actionUrl;
       this.config = {

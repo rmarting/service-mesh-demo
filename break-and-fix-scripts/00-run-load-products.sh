@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. ../servicemesh/0-environment.sh
+
 # Ingress Gateway
 ingressgateway_url="$(oc get route istio-ingressgateway -n ${ISTIO_SYSTEM_NAMESPACE} | awk 'NR>1 {printf ($5 == "edge") ? "https://%s" : "http://%s",$2 }')"
 msa_route_products=${ingressgateway_url}/api/products

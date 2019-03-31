@@ -4,8 +4,9 @@
   "scripts": {
     "ng": "ng",
     "client": "npx ng serve --proxy-config server.conf.js",
+    "scenarios": "cd ../scenarios && npx nodemon server.js",
     "server": "npx nodemon server.js",
-    "dev": "npx concurrently --kill-others \"npm run client\" \"npm run server\"",
+    "dev": "npx concurrently --kill-others \"npm run client\" \"npm run server\" \"npm run scenarios\"",
     "start": "node server.js",
     "build": "npx ng build",
     "test": "ng test",

@@ -23,22 +23,22 @@
     <div class="col-sm-12" *ngIf="command">
       <pfng-card [config]="command.config"
                  (onActionSelect)="handleActionSelect($event)">
-          {{ command.description }}
-          <img style="max-height: 150px; display: block; margin-left: auto; margin-right: auto; " class="img-responsive"  src="/assets/img/icon-patternfly.png">
+          <p>{{ command.description }}</p>
+          <img style="max-height: 300px; display: block; margin-left: auto; margin-right: auto; " class="img-responsive"  src="/assets/img/{{ command.image }}">
       </pfng-card>
     </div>
     <div class="col-sm-6" *ngIf="break">
       <pfng-card [config]="break.config"
                   (onActionSelect)="handleActionSelect($event)">
-          {{ break.description }}
-          <img style="max-height: 150px; display: block; margin-left: auto; margin-right: auto; " class="img-responsive"  src="/assets/img/icon-patternfly.png">
+          <p>{{ break.description }}</p>
+          <img style="max-height: 300px; display: block; margin-left: auto; margin-right: auto; " class="img-responsive"  src="/assets/img/{{ break.image }}">
       </pfng-card>
     </div>
     <div class="col-sm-6" *ngIf="fix">
       <pfng-card [config]="fix.config"
                   (onActionSelect)="handleActionSelect($event)">
-          {{ fix.description }}
-          <img style="max-height: 150px; display: block; margin-left: auto; margin-right: auto; " class="img-responsive"  src="/assets/img/icon-patternfly.png">
+          <p>{{ fix.description }}</p>
+          <img style="max-height: 300px; display: block; margin-left: auto; margin-right: auto; " class="img-responsive"  src="/assets/img/{{ fix.image }}">
       </pfng-card>
     </div>
   </div>

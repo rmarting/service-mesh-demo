@@ -32,11 +32,11 @@ const appRoutes: Routes = [
       title: 'Default Scenario',
       description: 'By running this scenario you will go back to the default service mesh configuration',
       command: {
-        title: 'Go back to default settings', 
+        title: 'Go back to default settings',
         subTitle: '',
         // tslint:disable-next-line:max-line-length
         description: 'By executing this command action istio/default will be run and both Virtual Services and Destion Rules will be deleted',
-        image: '',
+        image: 'istio-default.png',
         actionText: 'Execute', actionUrl: 'istio/default'
       }
     }
@@ -71,6 +71,7 @@ const appRoutes: Routes = [
       command: {
         title: 'Setting routing by version header', subTitle: '',
         description: 'This command...',
+        image: '',
         actionText: 'Execute', actionUrl: 'istio/header-routing'
       }
     }
