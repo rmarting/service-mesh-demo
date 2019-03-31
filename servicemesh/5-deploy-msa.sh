@@ -11,6 +11,10 @@ oc delete limitrange --all -n ${MSA_PROJECT_NAME}
 oc adm policy add-scc-to-user privileged -z default -n ${MSA_PROJECT_NAME}
 
 COOLSTORE_GW_ENDPOINT="http://$(oc get route istio-ingressgateway -n ${ISTIO_SYSTEM_NAMESPACE} | awk 'NR>1 {print $2}')"
+COOLSTORE_SCENARIOS_ENDPOINT="http://$(oc get route scenarios -n ${MSA_PROJECT_NAME} | awk 'NR>1 {print $2}')"
 
-oc process -p GIT_URI=${MSA_GIT_URI} -p GIT_REF=${MSA_GIT_REF} -p COOLSTORE_GW_ENDPOINT=${COOLSTORE_GW_ENDPOINT} -f ../microservices/coolstore-msa-template.yaml | \
+oc process -p GIT_URI=${MSA_GIT_URI} -p GIT_REF=${MSA_GIT_REF} \
+  -p COOLSTORE_GW_ENDPOINT=${COOLSTORE_GW_ENDPOINT} \
+  -p COOLSTORE_SCENARIOS_ENDPOINT=${COOLSTORE_SCENARIOS_ENDPOINT} \
+  -f ../microservices/coolstore-msa-template.yaml | \
   oc apply -n ${MSA_PROJECT_NAME} -f -

@@ -1,0 +1,123 @@
+<!--<div class="container-fluid pfng-fluid-width-container">
+    <div class="col-lg-4">
+      <pfng-info-status-card
+          [config]="card1Config">
+      </pfng-info-status-card>
+    </div>
+    <div class="col-lg-4">
+      <pfng-info-status-card
+          [config]="card3Config">
+      </pfng-info-status-card>
+    </div>
+    <div class="col-lg-4">
+      <pfng-info-status-card
+          [config]="card2Config">
+      </pfng-info-status-card>
+    </div>
+</div>-->
+
+<div class="container-fluid pfng-fluid-width-container">
+<!--<div class="cards-pf">-->
+    <div class="row row-cards-pf">
+      <div class="col-sm-4">
+        <pfng-card class="custom-card"
+                   [config]="config"
+                   [headerTemplate]="spacesHeaderTemplate">
+          <ng-template #spacesHeaderTemplate>
+            <h2 class="card-pf-title">
+              Forge Laptop Sticker
+            </h2>
+          </ng-template>
+          <div class="col-sm-12 custom-blank-slate-card">
+            <img class="img-responsive" ng-src="/assets/img/329199.jpg" src="/assets/img/329199.jpg">
+            <h3>JBoss Community Forge Project Sticker</h3>
+            <div class="row product-footer-row ng-scope">
+                <div class="col-xs-12">
+
+                    <div>
+                        <span><h1 class="ng-binding">$8.50</h1></span>
+                        <!-- ngIf: item.product.availability.quantity > 0 --><div ng-if="item.product.availability.quantity > 0" style="float:right" class="ng-scope"><label title="12 in our store in " class="label label-warning">12 left!</label>
+                            <a target="_blank" href="">&nbsp;<span class="fa fa-map-marker fa-lg"></span></a>
+                        </div><!-- end ngIf: item.product.availability.quantity > 0 -->
+
+                        <!-- ngIf: item.product.availability.quantity == 0 -->
+                    </div>
+
+                    <form class="form-inline ng-pristine ng-valid">
+                        <div class="form-group">
+                            <select name="quan" ng-model="item.quantity" class="form-control ng-pristine ng-valid ng-not-empty ng-touched" id="quan">
+					    	<option value="1" selected="">1</option>
+					    	<option value="2">2</option>
+					    	<option value="3">3</option>
+					    	<option value="4">4</option>
+					    	<option value="5">5</option>
+				    	</select>
+
+                        </div>
+                        <button ng-click="addToCart(item)" type="submit" class="btn btn-default">Add To Cart</button>
+                    </form>
+                </div>
+            </div>
+          </div>
+        </pfng-card>
+      </div>
+      <div class="col-sm-4">
+        <pfng-card class="custom-card"
+                   [config]="config"
+                   [headerTemplate]="itemsHeaderTemplate">
+          <ng-template #itemsHeaderTemplate>
+            <h2 class="card-pf-title">My work items
+              <select class="col-xs-3 col-sm-6 form-control custom-card-combobox">
+                <option value="default">Select a space to work with...</option>
+                <option value="osio">OSIO</option>
+              </select>
+            </h2>
+          </ng-template>
+          <div class="col-sm-12 custom-blank-slate-card">
+            <div class="custom-blank-slate-icon">
+              <i class="pficon pficon-info"></i>
+            </div>
+            <h3>Work items reflect the work to be done within a space.</h3>
+            <p>Once you create a space or join a space, your work items will begin displaying here.</p>
+          </div>
+        </pfng-card>
+      </div>
+      <div class="col-sm-4">
+        <pfng-card class="custom-card"
+                   [config]="config"
+                   [headerTemplate]="pipelinesHeaderTemplate">
+          <ng-template #pipelinesHeaderTemplate>
+            <h2 class="card-pf-title">Recent active pipelines
+              <span class="badge">1</span>
+            </h2>
+          </ng-template>
+          <div class="col-sm-12 custom-blank-slate-card">
+            <div class="custom-blank-slate-icon">
+              <i class="pficon pficon-info"></i>
+            </div>
+            <h3>No recent failed or active pipelines</h3>
+            <p>Failed pipelines or active pipelines will display here when you commit and build your codebase.</p>
+          </div>
+        </pfng-card>
+      </div>
+      <div class="col-sm-4">
+          <pfng-card class="custom-card"
+                     [config]="config"
+                     [headerTemplate]="pipelinesHeaderTemplate">
+            <ng-template #pipelinesHeaderTemplate>
+              <h2 class="card-pf-title">Recent active pipelines
+                <span class="badge">1</span>
+              </h2>
+            </ng-template>
+            <div class="col-sm-12 custom-blank-slate-card">
+              <div class="custom-blank-slate-icon">
+                <i class="pficon pficon-info"></i>
+              </div>
+              <h3>No recent failed or active pipelines</h3>
+              <p>Failed pipelines or active pipelines will display here when you commit and build your codebase.</p>
+            </div>
+          </pfng-card>
+        </div>
+    </div>
+  <!--</div>-->
+</div>

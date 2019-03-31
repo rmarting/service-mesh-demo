@@ -1,0 +1,20 @@
+{
+  "name": "scenarios",
+  "version": "0.0.1",
+  "scripts": {
+    "server": "npx nodemon server.js",
+    "start": "node server.js"
+  },
+  "private": true,
+  "dependencies": {
+    "corser": "^2.0.1",
+    "deepmerge": "^3.2.0",
+    "express": "^4.16.4",
+    "js-yaml": "^3.13.0",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.7"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  }
+}

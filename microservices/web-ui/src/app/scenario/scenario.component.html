@@ -1,0 +1,45 @@
+<h1>{{ title }}</h1>
+<h2>{{ description }}</h2>
+
+<br/>
+
+<div class="row" *ngIf="actionResult">
+  <div class="col-sm-12">
+    <div class="form-group">
+      <pfng-inline-notification
+          [header]="notificationHeader"
+          [message]="notificationMessage"
+          [dismissable]="true"
+          [type]="notificationType"
+          [hidden]="notificationHidden"
+          (hiddenChange)="handleNofiticationHidden($event)">
+      </pfng-inline-notification>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid pfng-fluid-width-container">
+  <div class="row row-cards-pf">
+    <div class="col-sm-12" *ngIf="command">
+      <pfng-card [config]="command.config"
+                 (onActionSelect)="handleActionSelect($event)">
+          {{ command.description }}
+          <img style="max-height: 150px; display: block; margin-left: auto; margin-right: auto; " class="img-responsive"  src="/assets/img/icon-patternfly.png">
+      </pfng-card>
+    </div>
+    <div class="col-sm-6" *ngIf="break">
+      <pfng-card [config]="break.config"
+                  (onActionSelect)="handleActionSelect($event)">
+          {{ break.description }}
+          <img style="max-height: 150px; display: block; margin-left: auto; margin-right: auto; " class="img-responsive"  src="/assets/img/icon-patternfly.png">
+      </pfng-card>
+    </div>
+    <div class="col-sm-6" *ngIf="fix">
+      <pfng-card [config]="fix.config"
+                  (onActionSelect)="handleActionSelect($event)">
+          {{ fix.description }}
+          <img style="max-height: 150px; display: block; margin-left: auto; margin-right: auto; " class="img-responsive"  src="/assets/img/icon-patternfly.png">
+      </pfng-card>
+    </div>
+  </div>
+</div>

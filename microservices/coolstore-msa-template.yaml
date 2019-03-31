@@ -368,6 +368,199 @@ objects:
           kind: ImageStreamTag
           name: inventory:latest
       type: ImageChange
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    creationTimestamp: null
+    name: scenarios
+  rules:
+  - apiGroups:
+    - ""
+    resources:
+    - pods
+    - services
+    - endpoints
+    - persistentvolumeclaims
+    - events
+    - configmaps
+    - secrets
+    verbs:
+    - '*'
+  - apiGroups:
+    - ""
+    resources:
+    - namespaces
+    verbs:
+    - get
+  - apiGroups:
+    - apps
+    resources:
+    - deployments
+    - daemonsets
+    - replicasets
+    - statefulsets
+    verbs:
+    - '*'
+  - apiGroups:
+    - apiextensions.k8s.io
+    resources:
+    - customresourcedefinitions
+    verbs:
+    - '*'
+  - apiGroups:
+    - apps.openshift.io
+    resources:
+    - deploymentconfigs
+    verbs:
+    - patch
+  - apiGroups:
+    - networking.istio.io
+    resources:
+    - destinationrules
+    - virtualservices
+    verbs:
+    - '*'
+  - apiGroups:
+    - cloudnative.redhat.com
+    resources:
+    - '*'
+    verbs:
+    - '*'
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: scenarios
+- kind: RoleBinding
+  apiVersion: rbac.authorization.k8s.io/v1
+  metadata:
+    name: scenarios
+  subjects:
+  - kind: ServiceAccount
+    name: scenarios
+  roleRef:
+    kind: Role
+    name: scenarios
+    apiGroup: rbac.authorization.k8s.io
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      build: scenarios
+    name: scenarios
+  spec:
+    tags:
+    - name: latest
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      build: scenarios
+    name: scenarios
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: scenarios:latest
+    source:
+      #contextDir: microservices/scenarios
+      contextDir: .
+      git:
+        #ref: ${GIT_REF}
+        #uri: ${GIT_URI}
+        ref: master
+        uri: https://github.com/cvicens/coolstore-scenarios.git
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: nodejs:10
+          namespace: openshift
+      type: Source
+    triggers:
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: scenarios
+      version: 1.0.0
+    name: scenarios
+  spec:
+    replicas: 1
+    selector:
+      app: scenarios
+      deploymentconfig: scenarios
+    strategy:
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          sidecar.istio.io/inject: "false"
+        labels:
+          app: scenarios
+          version: 1.0.0
+          deploymentconfig: scenarios
+      spec:
+        serviceAccountName: scenarios
+        containers:
+        - image: scenarios
+          name: scenarios
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          resources: {}
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - scenarios
+        from:
+          kind: ImageStreamTag
+          name: scenarios:latest
+      type: ImageChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: scenarios
+      version: 1.0.0
+    name: scenarios
+  spec:
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: scenarios
+      deploymentconfig: scenarios
+- apiVersion: v1
+  kind: Route
+  metadata:
+    labels:
+      expose: "true"
+      group: com.redhat.cloudnative
+      version: 1.0.0
+      app: scenarios
+    name: scenarios
+  spec:
+    port:
+      targetPort: http
+    to:
+      kind: Service
+      name: scenarios
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -404,6 +597,8 @@ objects:
           env:
             - name: COOLSTORE_GW_ENDPOINT
               value: ${COOLSTORE_GW_ENDPOINT}
+            - name: COOLSTORE_SCENARIOS_ENDPOINT
+              value: ${COOLSTORE_SCENARIOS_ENDPOINT}
           ports:
           - containerPort: 8080
             name: http
@@ -521,10 +716,13 @@ objects:
         kind: ImageStreamTag
         name: web-ui:latest
     source:
-      contextDir: microservices/web-nodejs
+      #contextDir: microservices/web-ui
+      contextDir: .
       git:
-        ref: ${GIT_REF}
-        uri: ${GIT_URI}
+        #ref: ${GIT_REF}
+        #uri: ${GIT_URI}
+        ref: master
+        uri: https://github.com/cvicens/coolstore-ng
       type: Git
     strategy:
       sourceStrategy:
@@ -736,4 +934,8 @@ parameters:
 - description: Ingress Gateway Endpoint
   displayName: Ingress Gateway Endpoint
   name: COOLSTORE_GW_ENDPOINT
+  required: true
+- description: Istio Scenarios API Endpoint
+  displayName: Istio Scenarios API Endpoint
+  name: COOLSTORE_SCENARIOS_ENDPOINT
   required: true

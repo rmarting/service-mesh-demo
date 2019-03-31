@@ -1,23 +1,8 @@
 #!/bin/bash
 
-# Web UI
-# OpenShift Route
-#msa_route_web=http://web-ui-coolstore.$(minishift ip).nip.io/
 # Ingress Gateway
-#msa_route_web=http://istio-ingressgateway-istio-system.$(minishift ip).nip.io/
-# Gateway
-# OpenShift Route
-#msa_route_api=http://gateway-coolstore.$(minishift ip).nip.io/api/products
-# Ingress Gateway 
-#msa_route_api=http://istio-ingressgateway-istio-system.$(minishift ip).nip.io/api/products
-# Catalog
-# OpenShift Route
-#msa_route_catalog=http://catalog-coolstore.$(minishift ip).nip.io/api/catalog
-# Inventory
-# OpenShift Route
-#msa_route_inventory=http://inventory-coolstore.$(minishift ip).nip.io/api/inventory/329299
-# Ingress Gateway
-msa_route_products=http://istio-ingressgateway-istio-system.$(minishift ip).nip.io/api/products
+ingressgateway_url="$(oc get route istio-ingressgateway -n ${ISTIO_SYSTEM_NAMESPACE} | awk 'NR>1 {printf ($5 == "edge") ? "https://%s" : "http://%s",$2 }')"
+msa_route_products=${ingressgateway_url}/api/products
 
 while true
 do  

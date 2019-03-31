@@ -1,0 +1,10 @@
+{
+    "apiVersion": "stable.example.com/v1",
+    "kind": "CronTab",
+    "metadata": {
+       "name": "foo"
+    },
+    "spec": {
+       "key": "value"
+    }
+ }

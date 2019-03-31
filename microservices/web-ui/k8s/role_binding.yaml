@@ -1,0 +1,11 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: web-ui
+subjects:
+- kind: ServiceAccount
+  name: web-ui
+roleRef:
+  kind: Role
+  name: web-ui
+  apiGroup: rbac.authorization.k8s.io
