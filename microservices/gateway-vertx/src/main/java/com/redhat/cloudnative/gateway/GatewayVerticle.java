@@ -69,8 +69,13 @@ public class GatewayVerticle extends AbstractVerticle {
                                                     product.getString("itemId"), resp.statusCode());
                                             return product.copy();
                                         }
-                                        return product.copy().put("availability", 
-                                            new JsonObject().put("quantity", resp.body().getInteger("quantity")));
+                                        
+                                        JsonObject newProduct = product.copy().put("availability", new JsonObject().put("quantity", resp.body().getInteger("quantity")));
+                                        if (msaVersion.equalsIgnoreCase("v2")) {
+                                            newProduct.put("discount", 0.2);
+                                        }
+                                        return newProduct;
+                                        
                                     })
                                     .subscribe(
                                         future::complete,
