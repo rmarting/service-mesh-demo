@@ -40,7 +40,7 @@ public class GatewayVerticle extends AbstractVerticle {
         router.get("/api/products").handler(this::products);
 
         // Server Definition to accept request
-        vertx.createHttpServer().requestHandler(router::accept).listen(Integer.getInteger("http.port", 9080));
+        vertx.createHttpServer().requestHandler(router::accept).listen(Integer.getInteger("http.port", 8080));
 
         // Simple Web Clients to invoke other microservices
         catalog = WebClient.create(vertx);
