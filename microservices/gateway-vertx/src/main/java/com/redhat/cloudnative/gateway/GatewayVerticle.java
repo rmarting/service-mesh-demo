@@ -87,7 +87,9 @@ public class GatewayVerticle extends AbstractVerticle {
                                         future::fail),
                             error -> {
                                 LOG.error("Inventory error for {}: {}", product.getString("itemId"), error.getMessage());
-                                return product;
+                                //return product.copy().put("availability", new JsonObject().put("quantity", resp.body().getInteger("quantity")));
+                                return product.copy().put("availability", new JsonObject().put("quantity", -1));
+                                //return product;
                             }
                         ))
                     .toList().toSingle()
