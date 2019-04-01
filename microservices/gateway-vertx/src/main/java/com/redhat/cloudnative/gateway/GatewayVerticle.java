@@ -70,6 +70,7 @@ public class GatewayVerticle extends AbstractVerticle {
                                     .putHeader(END_USER, user)
                                     .rxSend()
                                     .map(resp -> {
+                                        LOG.info("Resp for {}: status code {}", product.getString("itemId"), resp.statusCode());
                                         if (resp.statusCode() != 200) {
                                             LOG.warn("Inventory error for {}: status code {}",
                                                     product.getString("itemId"), resp.statusCode());
