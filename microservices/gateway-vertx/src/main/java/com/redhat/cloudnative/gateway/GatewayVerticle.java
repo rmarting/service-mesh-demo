@@ -32,7 +32,7 @@ public class GatewayVerticle extends AbstractVerticle {
     public void start() {
         // Circuit Breaker Definition
         circuit = CircuitBreaker.create("inventory-circuit-breaker", vertx, new CircuitBreakerOptions()
-                .setFallbackOnFailure(true).setMaxFailures(10).setResetTimeout(60000).setTimeout(10000));
+                .setFallbackOnFailure(false).setMaxFailures(1000000).setResetTimeout(1).setTimeout(60000));
 
         Router router = Router.router(vertx);
         router.route().handler(CorsHandler.create("*").allowedMethod(HttpMethod.GET));
@@ -40,7 +40,7 @@ public class GatewayVerticle extends AbstractVerticle {
         router.get("/api/products").handler(this::products);
 
         // Server Definition to accept request
-        vertx.createHttpServer().requestHandler(router::accept).listen(Integer.getInteger("http.port", 8080));
+        vertx.createHttpServer().requestHandler(router::accept).listen(Integer.getInteger("http.port", 9080));
 
         // Simple Web Clients to invoke other microservices
         catalog = WebClient.create(vertx);
