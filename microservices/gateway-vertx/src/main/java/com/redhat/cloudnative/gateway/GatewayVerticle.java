@@ -50,7 +50,7 @@ public class GatewayVerticle extends AbstractVerticle {
     private void products(RoutingContext rc) {
         String msaVersion = rc.request().getHeader(MSA_VERSION) == null ? "v0" : rc.request().getHeader(MSA_VERSION);
         String user = rc.request().getHeader(END_USER) == null ? "anonymous" : rc.request().getHeader(END_USER);
-        LOG.warn("user/msaVersion {}/{}", msaVersion, user);
+        LOG.info("user/msaVersion {}/{}", msaVersion, user);
         // Retrieve catalog
         catalog.get(8080, "catalog", "/api/catalog").as(BodyCodec.jsonArray())
             .putHeader(MSA_VERSION, msaVersion)
