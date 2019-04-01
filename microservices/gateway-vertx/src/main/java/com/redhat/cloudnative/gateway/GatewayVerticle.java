@@ -20,6 +20,7 @@ import rx.Observable;
 
 public class GatewayVerticle extends AbstractVerticle {
     private static final String MSA_VERSION = "msa-version";
+    private static final String USER = "user";
 
     private static final Logger LOG = LoggerFactory.getLogger(GatewayVerticle.class);
 
@@ -48,13 +49,17 @@ public class GatewayVerticle extends AbstractVerticle {
 
     private void products(RoutingContext rc) {
         String msaVersion = rc.request().getHeader(MSA_VERSION) == null ? "v0" : rc.request().getHeader(MSA_VERSION);
-        LOG.warn("msaVersion {}", msaVersion);
+        String user = rc.request().getHeader(USER) == null ? "anonymous" : rc.request().getHeader(USER);
+        LOG.warn("user/msaVersion {}/{}", msaVersion, user);
         // Retrieve catalog
-        catalog.get(8080, "catalog", "/api/catalog").as(BodyCodec.jsonArray()).rxSend().map(resp -> {
-            if (resp.statusCode() != 200) {
-                new RuntimeException("Invalid response from the catalog: " + resp.statusCode());
-            }
-            return resp.body();
+        catalog.get(8080, "catalog", "/api/catalog").as(BodyCodec.jsonArray())
+            .putHeader(MSA_VERSION, msaVersion)
+            .putHeader(USER, user)
+            .rxSend().map(resp -> {
+                if (resp.statusCode() != 200) {
+                    new RuntimeException("Invalid response from the catalog: " + resp.statusCode());
+                }
+                return resp.body();
         }).flatMap(products ->
         // For each item from the catalog, invoke the inventory service
         Observable.from(products).cast(JsonObject.class)
@@ -62,6 +67,7 @@ public class GatewayVerticle extends AbstractVerticle {
                         future -> inventory.get(8080, "inventory", "/api/inventory/" + product.getString("itemId"))
                                     .as(BodyCodec.jsonObject())
                                     .putHeader(MSA_VERSION, msaVersion)
+                                    .putHeader(USER, user)
                                     .rxSend()
                                     .map(resp -> {
                                         if (resp.statusCode() != 200) {
