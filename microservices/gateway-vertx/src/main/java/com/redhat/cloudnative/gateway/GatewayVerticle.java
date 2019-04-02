@@ -1,6 +1,5 @@
 package com.redhat.cloudnative.gateway;
 
-
 import io.vertx.circuitbreaker.CircuitBreakerOptions;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.Json;
@@ -40,7 +39,8 @@ public class GatewayVerticle extends AbstractVerticle {
         router.get("/api/products").handler(this::products);
 
         // Server Definition to accept request
-        vertx.createHttpServer().requestHandler(router::accept).listen(Integer.getInteger("http.port", 8080));
+        vertx.createHttpServer().requestHandler(router::accept)
+            .listen(Integer.getInteger("http.port", config().getInteger("HTTP_PORT", 8080)));
 
         // Simple Web Clients to invoke other microservices
         catalog = WebClient.create(vertx);
@@ -52,7 +52,7 @@ public class GatewayVerticle extends AbstractVerticle {
         String user = rc.request().getHeader(END_USER) == null ? "anonymous" : rc.request().getHeader(END_USER);
         LOG.info("user/msaVersion {}/{}", msaVersion, user);
         // Retrieve catalog
-        catalog.get(8080, "catalog", "/api/catalog").as(BodyCodec.jsonArray())
+        catalog.get(config().getInteger("CATALOG_SERVICE_PORT", 8080), config().getString("CATALOG_SERVICE_HOST", "catalog"), "/api/catalog").as(BodyCodec.jsonArray())
             .putHeader(MSA_VERSION, msaVersion)
             .putHeader(END_USER, user)
             .rxSend().map(resp -> {
@@ -64,32 +64,30 @@ public class GatewayVerticle extends AbstractVerticle {
         // For each item from the catalog, invoke the inventory service
         Observable.from(products).cast(JsonObject.class)
                 .flatMapSingle(product -> circuit.rxExecuteCommandWithFallback(
-                        future -> inventory.get(8080, "inventory", "/api/inventory/" + product.getString("itemId"))
-                                    .as(BodyCodec.jsonObject())
+                        future -> inventory.get(config().getInteger("INVENTORY_SERVICE_PORT", 8080), config().getString("INVENTORY_SERVICE_HOST", "inventory"), "/api/inventory/" + product.getString("itemId"))
+                                    //.as(BodyCodec.jsonObject()) ==> Don't decode in advance just in case we receive a 500!
                                     .putHeader(MSA_VERSION, msaVersion)
                                     .putHeader(END_USER, user)
                                     .rxSend()
                                     .map(resp -> {
-                                        LOG.info("Resp for {}: status code {}", product.getString("itemId"), (0 + resp.statusCode()));
-                                        if (resp.statusCode() != 200) {
-                                            LOG.warn("Inventory error for {}: status code {}",
-                                                    product.getString("itemId"), resp.statusCode());
-                                            return product.copy();
-                                        }
-                                        JsonObject newProduct = product.copy().put("availability", new JsonObject().put("quantity", resp.body().getInteger("quantity")));
-                                        if (msaVersion.equalsIgnoreCase("v2")) {
-                                            newProduct.put("discount", 0.2);
-                                        }
-                                        return newProduct;
+                                        LOG.debug("Resp for {}: status code {}", product.getString("itemId"), (0 + resp.statusCode()));
+                                        if (resp.statusCode() == 200 && resp.getHeader("content-type").equals("application/json")) {
+                                            // Decode the body as a json object
+                                            JsonObject newProduct = product.copy().put("availability", new JsonObject().put("quantity", resp.bodyAsJsonObject().getInteger("quantity")));
+                                            if (msaVersion.equalsIgnoreCase("v2")) {
+                                                newProduct.put("discount", 0.2);
+                                            }
+                                            return newProduct;
+                                        } 
+                                        LOG.warn("Inventory error for {}: status code {}", product.getString("itemId"), resp.statusCode());
+                                        return product.copy().put("availability", new JsonObject().put("quantity", -1));
                                     })
                                     .subscribe(
                                         future::complete,
                                         future::fail),
                             error -> {
                                 LOG.error("Inventory error for {}: {}", product.getString("itemId"), error.getMessage());
-                                //return product.copy().put("availability", new JsonObject().put("quantity", resp.body().getInteger("quantity")));
                                 return product.copy().put("availability", new JsonObject().put("quantity", -1));
-                                //return product;
                             }
                         ))
                     .toList().toSingle()
