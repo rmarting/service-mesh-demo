@@ -3,6 +3,7 @@ package com.redhat.cloudnative.gateway;
 import io.vertx.circuitbreaker.CircuitBreakerOptions;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.rxjava.circuitbreaker.CircuitBreaker;
@@ -12,6 +13,8 @@ import io.vertx.rxjava.ext.web.RoutingContext;
 import io.vertx.rxjava.ext.web.client.WebClient;
 import io.vertx.rxjava.ext.web.codec.BodyCodec;
 import io.vertx.rxjava.ext.web.handler.CorsHandler;
+
+import javax.management.RuntimeErrorException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,14 +55,24 @@ public class GatewayVerticle extends AbstractVerticle {
         String user = rc.request().getHeader(END_USER) == null ? "anonymous" : rc.request().getHeader(END_USER);
         LOG.info("user/msaVersion {}/{}", msaVersion, user);
         // Retrieve catalog
-        catalog.get(config().getInteger("CATALOG_SERVICE_PORT", 8080), config().getString("CATALOG_SERVICE_HOST", "catalog"), "/api/catalog").as(BodyCodec.jsonArray())
+        catalog.get(config().getInteger("CATALOG_SERVICE_PORT", 8080), config().getString("CATALOG_SERVICE_HOST", "catalog"), "/api/catalog")
+            //.as(BodyCodec.jsonArray())
             .putHeader(MSA_VERSION, msaVersion)
             .putHeader(END_USER, user)
             .rxSend().map(resp -> {
-                if (resp.statusCode() != 200) {
-                    new RuntimeException("Invalid response from the catalog: " + resp.statusCode());
+                LOG.info("resp {}/{} \nbody: {}", resp.statusCode(), resp.getHeader("content-type"), resp.body());
+                if (resp.statusCode() == 200 && resp.getHeader("content-type").contains("application/json")) {
+                    JsonArray products = resp.bodyAsJsonArray();
+                    LOG.info("Products {}", products);
+                    return products;
                 }
-                return resp.body();
+                else {
+                    //throw new RuntimeException("Invalid response from the catalog: " + resp.statusCode());
+                    throw new HttpRuntimeException(
+                        "Invalid response from the catalog: " + resp.statusCode(),
+                        resp.statusCode());
+                }
+                //return new JsonArray();
         }).flatMap(products ->
         // For each item from the catalog, invoke the inventory service
         Observable.from(products).cast(JsonObject.class)
@@ -71,7 +84,7 @@ public class GatewayVerticle extends AbstractVerticle {
                                     .rxSend()
                                     .map(resp -> {
                                         LOG.debug("Resp for {}: status code {}", product.getString("itemId"), (0 + resp.statusCode()));
-                                        if (resp.statusCode() == 200 && resp.getHeader("content-type").equals("application/json")) {
+                                        if (resp.statusCode() == 200 && resp.getHeader("content-type").contains("application/json")) {
                                             // Decode the body as a json object
                                             JsonObject newProduct = product.copy().put("availability", new JsonObject().put("quantity", resp.bodyAsJsonObject().getInteger("quantity")));
                                             if (msaVersion.equalsIgnoreCase("v2")) {
@@ -94,7 +107,13 @@ public class GatewayVerticle extends AbstractVerticle {
             )
             .subscribe(
                 list -> rc.response().end(Json.encodePrettily(list)),
-                error -> rc.response().end(new JsonObject().put("error", error.getMessage()).toString())
+                error -> {
+                    JsonObject response = new JsonObject().put("error", error.getMessage());
+                    if (error instanceof HttpRuntimeException) {
+                        response.put("status", ((HttpRuntimeException)error).getStatus());
+                    }
+                    rc.response().end(response.toString());
+                }
             );
     }
 }
