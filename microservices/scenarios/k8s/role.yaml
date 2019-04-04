@@ -41,7 +41,9 @@ rules:
   - apps.openshift.io
   resources:
   - deploymentconfigs
+  - deploymentconfigs/status
   verbs:
+  - get
   - patch
 - apiGroups:
   - networking.istio.io

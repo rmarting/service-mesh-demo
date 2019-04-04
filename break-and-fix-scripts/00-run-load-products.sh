@@ -9,7 +9,7 @@ msa_route_products=${ingressgateway_url}/api/products
 while true
 do  
   # Invoking service
-  HTTP_RESPONSE=$(curl --silent --write-out "HTTPSTATUS:%{http_code}:SIZE:%{size_download}:TIME:%{time_total}" -H "msa-version: v2" $msa_route_products)
+  HTTP_RESPONSE=$(curl --silent --write-out "HTTPSTATUS:%{http_code}:SIZE:%{size_download}:TIME:%{time_total}" -H "msa-version: v1" $msa_route_products)
   # extract the body
   HTTP_BODY=$(echo $HTTP_RESPONSE | sed -e 's/HTTPSTATUS\:.*//g')
   # extract the stats

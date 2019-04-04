@@ -2,8 +2,15 @@ import { Component, OnInit } from '@angular/core';
 
 import { InfoStatusCardConfig } from 'patternfly-ng/card';
 import { CardAction, CardConfig, CardFilter, CardFilterPosition } from 'patternfly-ng/card';
+
 import { Product } from '../model/product.model';
+import { Notification, NotificationEvent } from 'patternfly-ng/notification';
+
 import { ProductsService } from '../services/products.service';
+import { NotificationsService } from '../services/notifications.service';
+import { NotificationType } from 'patternfly-ng/notification';
+import { GenericResult } from '../model/generic-result.model';
+import { HttpRuntimeException } from '../model/http-error.model';
 
 const data = [
   {
@@ -27,14 +34,26 @@ export class ProductsComponent implements OnInit {
 
   products: Product[];
 
-  constructor(private productsService: ProductsService) {
+  httpRuntimeException: HttpRuntimeException;
+
+  constructor(private productsService: ProductsService, private notificationsService: NotificationsService) {
     console.log('ProductsComponent');
-    this.productsService.products.subscribe(products => {
-      console.log('products', products);
-      if (products) {
-        this.products = products;
+    this.productsService.products.subscribe(payload => {
+      console.log('payload', payload);
+      if (Array.isArray(payload)) {
+        this.products = payload;
+      } else {
+        // Show error!
+        this.httpRuntimeException = payload as HttpRuntimeException;
+        this.products = [];
+
+        this.notificationsService.notify(NotificationType.DANGER, 'Error retrieving products', this.httpRuntimeException.error);
       }
     });
+  }
+
+  getNotifications(): Notification[] {
+    return this.notificationsService.notifications;
   }
 
   ngOnInit() {
@@ -43,5 +62,17 @@ export class ProductsComponent implements OnInit {
       noPadding: true,
       topBorder: true
     } as CardConfig;
+  }
+
+  refresh($event: any) {
+    this.productsService.getProducts();
+  }
+
+  handleClose($event: NotificationEvent): void {
+    this.notificationsService.remove($event.notification);
+  }
+
+  handleViewingChange($event: NotificationEvent): void {
+    this.notificationsService.setViewing($event.notification, $event.isViewing);
   }
 }

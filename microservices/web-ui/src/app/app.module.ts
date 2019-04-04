@@ -12,6 +12,7 @@ import { VerticalNavigationModule } from 'patternfly-ng/navigation';
 import { InfoStatusCardModule } from 'patternfly-ng/card';
 import { CardModule } from 'patternfly-ng/card';
 import { InlineNotificationModule } from 'patternfly-ng/notification';
+import { ToastNotificationModule, ToastNotificationListModule, NotificationService } from 'patternfly-ng/notification';
 
 // Components
 import { AppComponent } from './app.component';
@@ -22,6 +23,7 @@ import { ScenarioComponent } from './scenario/scenario.component';
 // Services
 import { ScenariosService } from 'src/app/services/scenarios.service';
 import { ProductsService } from 'src/app/services/products.service';
+import { NotificationsService } from 'src/app/services/notifications.service';
 
 const appRoutes: Routes = [
   { path: 'products', component: ProductsComponent },
@@ -42,23 +44,88 @@ const appRoutes: Routes = [
     }
   },
   {
-    path: 'scenario/circuit-breaker',
+    path: 'scenario/circuit-breaker-1',
     component: ScenarioComponent,
     data: {
-      title: 'Circtuit Breaking',
+      title: 'Circuit Breaker I',
+      description: 'Learn how to avoid cascading errors by applying the Cirtuit Breaker pattern',
+      break: {
+        title: 'Break the \'Catalog\' service',
+        subTitle: '',
+        // description: 'This action breaks the code in one of the PODs of the catalog service, you can check the logs of the container',
+        description: 'In this scenario we\'re going to invoke a URL within the \'catalog\' service that breaks it. \
+        There are 2 PODs but the \'break\' action only breaks one at random adding a delay (5s) to the response. \
+        After clicking on the \'Break\' action below go to the \'products\' area and refresh several times. One out of \
+        two will return in about 5s. \
+        You can also use: curl\ -k {{ baseUrl }}/api/products ',
+        image: 'circuit-breaker-1-break.png',
+        actionText: 'Break', actionUrl: 'istio/circuit-breaker-1-break'
+      },
+      fix: {
+        title: 'Fix it by using a retry policy', subTitle: '',
+        description: 'This fix sets a timeout for requests to the \'catalog\' service of 2s \
+        (https://istio.io/docs/tasks/traffic-management/request-timeouts/) in the Virtual Service. This way instead of freezing \
+        for an undefined amount of time, if our request hit the broken POD the wating time will be 2s max.',
+        image: 'circuit-breaker-1-fix.png',
+        cheatSheet: [
+          ''
+        ],
+        actionText: 'Fix', actionUrl: 'istio/circuit-breaker-1-fix'
+      }
+    }
+  },
+  {
+    path: 'scenario/circuit-breaker-2',
+    component: ScenarioComponent,
+    data: {
+      title: 'Circuit Breaker II',
+      description: 'Learn how to avoid cascading errors by applying the Cirtuit Breaker pattern',
+      break: {
+        title: 'Break the \'Inventory\' service',
+        subTitle: '',
+        description: 'In this scenario we\'re going to invoke a URL within the \'inventory\' service that breaks it. \
+        There are 2 PODs but the \'break\' action only breaks one at random generating an exception 5xx everytime \
+        /api/inventory/id is\'s involked. \
+        After clicking on the \'Break\' action below go to the \'products\' area and refresh several times. You\'ll see \
+        how half of the proeucts have quantity set to \'-1\'. \
+        You can also use: curl\ -k {{ baseUrl }}/api/products',
+        image: 'circuit-breaker-break.png',
+        actionText: 'Break', actionUrl: 'istio/circuit-breaker-2-break'
+      },
+      fix: {
+        title: 'Fix it by using an outlier traffic policy', subTitle: '',
+        description: 'This fix uses the Cirtuit Breaker pattern by applying an outlier detection policy. After applying the \
+        fix, go back to the \'products\' area and refresh, after refreshing a couple of times you should see no errors. You can \
+        always look at the \'envoy\' stats.',
+        image: 'circuit-breaker-2-fix.png',
+        cheatSheet: [
+          'export INVENTORY_POD=$(oc get pod -n coolstore | grep inventory | grep Running | awk \'NR == 1 {print $1}\')',
+          'oc exec $GW_POD -c istio-proxy -n coolstore curl http://localhost:15000/stats | grep ejection'
+        ],
+        actionText: 'Fix', actionUrl: 'istio/circuit-breaker-2-fix'
+      }
+    }
+  },
+  {
+    path: 'scenario/fault-injection',
+    component: ScenarioComponent,
+    data: {
+      title: 'Fault Injection',
       description: 'Avoid cascading errors by applying the Cirtuit Breaker pattern',
       break: {
         title: 'Break the \'Catalog\' service',
         subTitle: '',
-        description: 'This action breaks the code in one of the PODs of the catalog service, you can check the logs of the container',
-        image: '',
-        actionText: 'Break', actionUrl: 'istio/break-1'
+        // description: 'This action breaks the code in one of the PODs of the catalog service, you can check the logs of the container',
+        description: 'In this scenario we\'re going to create a Virtual \
+        This action injects HTTP 5xx errors when a certain header is received by the Virtual Service',
+        image: 'circuit-breaker-break.png',
+        actionText: 'Break', actionUrl: 'istio/circuit-breaker-break'
       },
       fix: {
         title: 'Fix it by using a retry technic', subTitle: '',
         description: 'This fix applies a change in the catalog Virtual Service so that if there\'s a failure it retries up to 3 times',
         image: '',
-        actionText: 'Fix', actionUrl: 'istio/fix-1'
+        actionText: 'Fix', actionUrl: 'istio/circuit-breaker-fix'
       }
     }
   },
@@ -71,7 +138,7 @@ const appRoutes: Routes = [
       command: {
         title: 'Setting routing by version header', subTitle: '',
         description: 'This command...',
-        image: '',
+        image: 'header-routing.png',
         actionText: 'Execute', actionUrl: 'istio/header-routing'
       }
     }
@@ -102,6 +169,8 @@ const appRoutes: Routes = [
     InfoStatusCardModule,
     CardModule,
     InlineNotificationModule,
+    ToastNotificationModule,
+    ToastNotificationListModule,
     BsDropdownModule.forRoot(),
     RouterModule.forRoot(
       appRoutes,
@@ -110,7 +179,7 @@ const appRoutes: Routes = [
     BrowserModule,
     HttpClientModule
   ],
-  providers: [BsDropdownConfig, ScenariosService, ProductsService],
+  providers: [BsDropdownConfig, ScenariosService, ProductsService, NotificationService, NotificationsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

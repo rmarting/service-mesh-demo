@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { CardConfig, CardAction } from 'patternfly-ng/card';
 import { ScenariosService } from 'src/app/services/scenarios.service';
+import { ConfigService } from '../services/config.service';
+
+import { CardConfig, CardAction } from 'patternfly-ng/card';
 import { GenericResult } from '../model/generic-result.model';
 import { NotificationType } from 'patternfly-ng/notification';
+import { Config } from '../model/config.model';
 
 @Component({
   selector: 'app-scenario',
@@ -12,6 +15,11 @@ import { NotificationType } from 'patternfly-ng/notification';
   styleUrls: ['./scenario.component.css']
 })
 export class ScenarioComponent implements OnInit {
+  config: Config;
+  baseUrl: string;
+
+  scenariosServiceReady: boolean;
+
   title: string;
   description: string;
 
@@ -29,7 +37,23 @@ export class ScenarioComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private configService: ConfigService,
     private scenariosService: ScenariosService) {
+      console.log('ScenarioComponent constructor');
+      this.configService.config.subscribe(config => {
+        console.log('config', config);
+        if (config) {
+          this.config = config;
+          this.baseUrl = this.config.API_ENDPOINT;
+        }
+      });
+
+      this.scenariosService.ready.subscribe(ready => {
+        console.log('scenariosServiceReady', ready);
+        if (ready) {
+          this.scenariosServiceReady = ready;
+        }
+      });
   }
 
   ngOnInit() {
@@ -44,7 +68,7 @@ export class ScenarioComponent implements OnInit {
       this.command = new ActionCard(
         this.route.snapshot.data.command.title,
         this.route.snapshot.data.command.subTitle,
-        this.route.snapshot.data.command.description,
+        this.processDescription(this.route.snapshot.data.command.description),
         this.route.snapshot.data.command.image,
         this.route.snapshot.data.command.actionText,
         this.route.snapshot.data.command.actionUrl
@@ -54,7 +78,7 @@ export class ScenarioComponent implements OnInit {
         this.break = new ActionCard(
           this.route.snapshot.data.break.title,
           this.route.snapshot.data.break.subTitle,
-          this.route.snapshot.data.break.description,
+          this.processDescription(this.route.snapshot.data.break.description),
           this.route.snapshot.data.break.image,
           this.route.snapshot.data.break.actionText,
           this.route.snapshot.data.break.actionUrl
@@ -64,7 +88,7 @@ export class ScenarioComponent implements OnInit {
         this.fix = new ActionCard(
           this.route.snapshot.data.fix.title,
           this.route.snapshot.data.fix.subTitle,
-          this.route.snapshot.data.fix.description,
+          this.processDescription(this.route.snapshot.data.fix.description),
           this.route.snapshot.data.fix.image,
           this.route.snapshot.data.fix.actionText,
           this.route.snapshot.data.fix.actionUrl
@@ -77,8 +101,18 @@ export class ScenarioComponent implements OnInit {
     this.notificationHidden = $event;
   }
 
+  processDescription(description: string) {
+    const re = /{{\s*baseUrl\s*}}/gi;
+    return description.replace(re, this.baseUrl);
+  }
+
   handleActionSelect($event: CardAction): void {
     console.log($event.hypertext, $event.id);
+
+    if (!this.scenariosServiceReady) {
+      console.error('WAIT!!!');
+      return;
+    }
 
     this.scenariosService.runAction($event.id)
       .subscribe(

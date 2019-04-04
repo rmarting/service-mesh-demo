@@ -29,14 +29,14 @@
     </div>
     <div class="col-sm-6" *ngIf="break">
       <pfng-card [config]="break.config"
-                  (onActionSelect)="handleActionSelect($event)">
+                 (onActionSelect)="handleActionSelect($event)">
           <p>{{ break.description }}</p>
           <img style="max-height: 300px; display: block; margin-left: auto; margin-right: auto; " class="img-responsive"  src="/assets/img/{{ break.image }}">
       </pfng-card>
     </div>
     <div class="col-sm-6" *ngIf="fix">
       <pfng-card [config]="fix.config"
-                  (onActionSelect)="handleActionSelect($event)">
+                 (onActionSelect)="handleActionSelect($event)">
           <p>{{ fix.description }}</p>
           <img style="max-height: 300px; display: block; margin-left: auto; margin-right: auto; " class="img-responsive"  src="/assets/img/{{ fix.image }}">
       </pfng-card>

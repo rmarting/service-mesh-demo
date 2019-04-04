@@ -8,6 +8,9 @@ import { Router } from '@angular/router';
 
 import { VerticalNavigationItem } from 'patternfly-ng/navigation/vertical-navigation/vertical-navigation-item';
 
+import { Notification } from 'patternfly-ng/notification';
+import { NotificationsService } from '../services/notifications.service';
+
 @Component({
   encapsulation: ViewEncapsulation.None,
   selector: 'app-main',
@@ -51,7 +54,14 @@ export class MainComponent implements OnInit {
   // tslint:disable-next-line:no-inferrable-types
   actionText: string = '';
 
-  constructor(private chRef: ChangeDetectorRef, private router: Router) {
+  constructor(
+    private chRef: ChangeDetectorRef,
+    private router: Router,
+    private nofiticationsService: NotificationsService) {
+  }
+
+  getNotifications(): Notification[] {
+    return this.nofiticationsService.notifications;
   }
 
   ngOnInit(): void {
@@ -85,8 +95,12 @@ export class MainComponent implements OnInit {
             url: '/scenario/header-routing'
           },
           {
-            title: 'Circuit Breaker',
-            url: '/scenario/circuit-breaker'
+            title: 'Circuit Breaker I',
+            url: '/scenario/circuit-breaker-1'
+          },
+          {
+            title: 'Circuit Breaker II',
+            url: '/scenario/circuit-breaker-2'
           }
         ]
       },

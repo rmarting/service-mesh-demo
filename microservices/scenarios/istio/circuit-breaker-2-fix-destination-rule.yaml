@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: inventory
+spec:
+  host: inventory
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+  subsets:
+  - name: version-v1
+    labels:
+      version: 1.0.0
+    trafficPolicy:
+      outlierDetection:
+        consecutiveErrors: 1
+        interval: 10s
+        baseEjectionTime: 3m
+        maxEjectionPercent: 100

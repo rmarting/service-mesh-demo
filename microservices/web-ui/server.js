@@ -4,9 +4,6 @@ const corser = require("corser");
 const keycloakConfig = require('./config/keycloak.config');
 const coolstoreConfig = require('./config/coolstore.config');
 
-const { applyDefaultConfig } = require('./istio/default-raw');
-const { applyHeaderRouting } = require('./istio/header-routing-raw');
-
 const app = express();
 app.use(corser.create());
 

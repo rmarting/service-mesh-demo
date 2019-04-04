@@ -84,6 +84,39 @@ spec:
   gateways:
   - ${MSA_PROJECT_NAME}-gateway
   http:
+  - fault:
+      abort:
+        httpStatus: 500
+        percent: 100
+    match:
+    - headers:
+        end-user:
+          exact: jason
+    route:
+    - destination:
+        host: inventory
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /api/inventory/break
+    rewrite:
+      uri: /api/break
+    route:
+    - destination:
+        host: inventory
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /api/inventory/fix
+    rewrite:
+      uri: /api/fix
+    route:
+    - destination:
+        host: inventory
+        port:
+          number: 8080
   - match:
     - uri:
         prefix: /api/inventory
@@ -92,4 +125,46 @@ spec:
         host: inventory
         port:
           number: 8080
+EOF
+
+cat <<EOF | oc apply -n ${MSA_PROJECT_NAME} -f -
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ${MSA_PROJECT_NAME}-catalog
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - ${MSA_PROJECT_NAME}-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /api/catalog/break
+    rewrite:
+      uri: /api/break
+    route:
+    - destination:
+        host: catalog
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /api/catalog/fix
+    rewrite:
+      uri: /api/fix
+    route:
+    - destination:
+        host: catalog
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /api/catalog
+    route:
+    - destination:
+        host: catalog
+        port:
+          number: 8080
+    timeout: 2s
 EOF

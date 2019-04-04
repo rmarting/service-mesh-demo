@@ -58,6 +58,50 @@ async function scaleDeploymentConfig (config, objectName, replicas) {
   return await rp(options);
 }
 
+async function getStatusOfDeploymentConfig (config, objectName) {
+  const baseUri = `apis/apps.openshift.io/v1/namespaces/${config.namespace}/deploymentconfigs`;
+  var options = {
+    agentOptions: {
+      ca: config.ca
+    },
+    rejectUnauthorized: false,
+    method: 'GET',
+    uri: config.url + '/' + baseUri + '/' + objectName + '/status',
+    headers: {
+      'Authorization': 'Bearer ' + config.auth.bearer,
+      'Content-Type': 'application/strategic-merge-patch+json'
+    },
+    json: true // Automatically parses the JSON string in the response
+  };
+
+  return await rp(options);
+}
+
+async function rolloutLatestDeploymentConfig (config, objectName) {
+  const _status = await getStatusOfDeploymentConfig(config, objectName);
+  console.log(`status of ${objectName}:`, _status);
+
+  const baseUri = `apis/apps.openshift.io/v1/namespaces/${config.namespace}/deploymentconfigs`;
+  var options = {
+    agentOptions: {
+      ca: config.ca
+    },
+    rejectUnauthorized: false,
+    method: 'PATCH',
+    body: {status: {latestVersion: _status.status.latestVersion + 1 }},
+    uri: config.url + '/' + baseUri + '/' + objectName + '/status',
+    headers: {
+      'Authorization': 'Bearer ' + config.auth.bearer,
+      'Content-Type': 'application/strategic-merge-patch+json'
+    },
+    json: true // Automatically parses the JSON string in the response
+  };
+
+  return await rp(options);
+}
+
 module.exports.deleteObject = deleteObject;
 module.exports.createObject = createObject;
 module.exports.scaleDeploymentConfig = scaleDeploymentConfig;
+module.exports.getStatusOfDeploymentConfig = getStatusOfDeploymentConfig;
+module.exports.rolloutLatestDeploymentConfig = rolloutLatestDeploymentConfig;
