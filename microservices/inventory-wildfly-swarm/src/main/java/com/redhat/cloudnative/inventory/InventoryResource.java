@@ -39,7 +39,7 @@ public class InventoryResource {
 		} catch (RuntimeException re) {
 			inventory = null; // No data
 			//if ((new Random()).nextInt(10) % 2 == 0) {
-				httpStatus = Response.Status.INTERNAL_SERVER_ERROR;
+				httpStatus = Response.Status.SERVICE_UNAVAILABLE;
 			//} else {
 			//	httpStatus = Response.Status.NOT_FOUND;
 			//}
