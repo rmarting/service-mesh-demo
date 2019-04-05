@@ -2,6 +2,8 @@ package com.redhat.cloudnative.inventory;
 
 import java.util.Random;
 
+import org.jboss.logging.Logger;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -18,7 +20,8 @@ import com.redhat.cloudnative.inventory.breakfix.service.BreakFixService;
 @Path("/")
 @ApplicationScoped
 public class InventoryResource {
-
+	private static final Logger LOGGER = Logger.getLogger(InventoryResource.class);
+	
 	@PersistenceContext(unitName = "InventoryPU")
 	private EntityManager em;
 
@@ -29,6 +32,8 @@ public class InventoryResource {
 	@Path("/api/inventory/{itemId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAvailability(@PathParam("itemId") String itemId) {
+		LOGGER.info("finding itemId: " + itemId);
+
 		Inventory inventory = em.find(Inventory.class, itemId);
 
 		Response.Status httpStatus = Response.Status.OK;
@@ -38,11 +43,8 @@ public class InventoryResource {
 			this.breakFixService.process();
 		} catch (RuntimeException re) {
 			inventory = null; // No data
-			//if ((new Random()).nextInt(10) % 2 == 0) {
-				httpStatus = Response.Status.SERVICE_UNAVAILABLE;
-			//} else {
-			//	httpStatus = Response.Status.NOT_FOUND;
-			//}
+			// If error is not 503 == SERVICE_UNAVAILABLE then outlier detection doesn't seem to work!
+			httpStatus = Response.Status.SERVICE_UNAVAILABLE;
 		}
 
 		if (inventory == null) {
