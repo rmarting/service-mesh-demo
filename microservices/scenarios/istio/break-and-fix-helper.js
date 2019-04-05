@@ -5,7 +5,7 @@ const NAMESPACE = process.env.OPENSHIFT_BUILD_NAMESPACE || 'coolstore';
 const BASE_DOMAIN = process.env.BASE_DOMAIN || 'svc.cluster.local';
 
 async function breakService (service, breakType, breakParam) {
-  const host = process.env.BASE_DOMAIN ? `${service}-${NAMESPACE}` : service;
+  const host = process.env.BASE_DOMAIN ? `${service}-${NAMESPACE}` : `${service}.${NAMESPACE}`;
   const port = process.env.BASE_DOMAIN ? 80 : 8080;
   const baseUrl =  `http://${host}.${BASE_DOMAIN}:${port}`;
   var options = {
@@ -19,7 +19,7 @@ async function breakService (service, breakType, breakParam) {
 }
 
 async function fixService (service, breakType) {
-  const host = process.env.BASE_DOMAIN ? `${service}-${NAMESPACE}` : service;
+  const host = process.env.BASE_DOMAIN ? `${service}-${NAMESPACE}` : `${service}.${NAMESPACE}`;
   const port = process.env.BASE_DOMAIN ? 80 : 8080;
   const baseUrl =  `http://${host}.${BASE_DOMAIN}:${port}`;
   var options = {
