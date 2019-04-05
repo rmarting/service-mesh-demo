@@ -20,7 +20,7 @@ app.get('/sys/info/ping', function(req, res, next) {
   res.end('"OK"');
 });
 
-// keycloak config server
+// keycloak config server 
 app.get('/keycloak.json', function(req, res, next) {
   res.json(keycloakConfig);
 });

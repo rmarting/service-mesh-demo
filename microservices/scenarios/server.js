@@ -79,7 +79,7 @@ app.get('/istio/header-routing', async function(req, res) {
     }
 });
 
-// Scenario: Default
+// Scenario: Default 
 app.get('/istio/default', async function(req, res) {
   try {
       const result = await applyDefaultConfig(true);
