@@ -454,21 +454,21 @@ objects:
   kind: BuildConfig
   metadata:
     labels:
+      app: scenarios
+      group: com.redhat.cloudnative
+      version: 1.0.0
       build: scenarios
-    name: scenarios
+    name: scenarios-s2i
   spec:
     output:
       to:
         kind: ImageStreamTag
         name: scenarios:latest
     source:
-      #contextDir: microservices/scenarios
-      contextDir: .
+      contextDir: microservices/scenarios
       git:
-        #ref: ${GIT_REF}
-        #uri: ${GIT_URI}
-        ref: master
-        uri: https://github.com/cvicens/coolstore-scenarios.git
+        ref: ${GIT_REF}
+        uri: ${GIT_URI}
       type: Git
     strategy:
       sourceStrategy:
@@ -708,8 +708,11 @@ objects:
   kind: BuildConfig
   metadata:
     labels:
+      app: web-ui
+      group: com.redhat.cloudnative
+      version: 1.0.0
       build: web-ui
-    name: web-ui
+    name: web-ui-s2i
   spec:
     output:
       to:
