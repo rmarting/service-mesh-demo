@@ -4,46 +4,42 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 
 const config = require('./config');
+const consts = require('./consts');
 
 const k8s = require('./k8s-helper');
 
-const API_GROUP = "networking.istio.io";
-const API_VERSION = "v1alpha3";
-
-const INVENTORY_DC_V2 = 'inventory-v2';
+const { applyDefaultConfig } = require('./default-raw');
 
 const virtualService = yaml.safeLoad(fs.readFileSync('./istio/header-routing-virtual-service.yaml', 'utf8'));
 const destinationRule = yaml.safeLoad(fs.readFileSync('./istio/header-routing-destination-rule.yaml', 'utf8'));
-
-const VIRTUAL_SERVICES_KIND_PLURAL = 'virtualservices';
-const DESTINATION_RULES_KIND_PLURAL = 'destinationrules';
 
 async function main () {
   try {
     const _config = config.getInCluster();
 
-    const inventoryV2Scaled = await k8s.scaleDeploymentConfig(_config, INVENTORY_DC_V2, 1);
-    console.debug('inventoryV2Scaled: ', inventoryV2Scaled);
+    const result = await applyDefaultConfig(false, _config);
 
-    try {
-        const virtualServiceDeleted = await k8s.deleteObject(_config, API_GROUP, API_VERSION, VIRTUAL_SERVICES_KIND_PLURAL, virtualService.metadata.name);
-        console.log('virtualServiceDeleted: ', virtualServiceDeleted);
-    } catch (err) {
-      console.debug('virtualServiceDelete Error', err);
+    if (result.success) {
+      const inventoryV2Scaled = await k8s.scaleDeploymentConfig(_config, consts.INVENTORY_DC_V2, 1);
+      console.debug('inventoryV2Scaled: ', inventoryV2Scaled);
+      
+      const virtualServiceCreated = await k8s.createObject(_config, 
+        consts.ISTIO_NETWORKING_API_GROUP,
+        consts.ISTIO_API_VERSION, 
+        consts.VIRTUAL_SERVICES_KIND_PLURAL, 
+        virtualService);
+      console.log('header-routing simple virtual service planted: ', virtualServiceCreated);
+
+      const destinationRuleCreated = await k8s.createObject(_config, 
+        consts.ISTIO_NETWORKING_API_GROUP,
+        consts.ISTIO_API_VERSION, 
+        consts.DESTINATION_RULES_KIND_PLURAL, 
+        destinationRule);
+      console.log('header-routing simple destination rule planted: ', destinationRuleCreated);
+    } else {
+      console.error('Error: ', result.error)
+      return {success: false, error: 'header-routing command couldn\'t be applied. ' + result.error};  
     }
-
-    try {
-      const destinationRuleDeleted = await k8s.deleteObject(_config, API_GROUP, API_VERSION, DESTINATION_RULES_KIND_PLURAL, destinationRule.metadata.name);
-      console.log('destinationRuleDeleted: ', destinationRuleDeleted);
-    } catch (err) {
-      console.debug('destinationRuleDelete Error', err);
-    }
-    
-    const virtualServiceCreated = await k8s.createObject(_config, API_GROUP, API_VERSION, VIRTUAL_SERVICES_KIND_PLURAL, virtualService);
-    //console.log('virtualServiceCreated: ', virtualServiceCreated);
-
-    const destinationRuleCreated = await k8s.createObject(_config, API_GROUP, API_VERSION, DESTINATION_RULES_KIND_PLURAL, destinationRule);
-    //console.log('destinationRuleCreated: ', destinationRuleCreated);
 
     return {success: true};
   } catch (err) {

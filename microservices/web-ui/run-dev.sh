@@ -6,5 +6,6 @@ export COOLSTORE_GW_ENDPOINT=http://istio-ingressgateway-istio-system.apps.serve
 export COOLSTORE_SCENARIOS_ENDPOINT=http://localhost:8080
 export OPENSHIFT_BUILD_NAMESPACE=coolstore
 export BASE_DOMAIN=apps.serverless-8a7c.openshiftworkshop.com
+export WEB_UI_PORT=8090
 
 npm run dev

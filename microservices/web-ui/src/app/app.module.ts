@@ -37,7 +37,8 @@ const appRoutes: Routes = [
         title: 'Go back to default settings',
         subTitle: '',
         // tslint:disable-next-line:max-line-length
-        description: 'By executing this command action istio/default will be run and both Virtual Services and Destion Rules will be deleted',
+        description: 'By executing clicking on \'Execute\' below, action \'istio/default\' will be run and both Virtual Services \
+        and Destination Rules will be deleted',
         image: 'istio-default.png',
         actionText: 'Execute', actionUrl: 'istio/default'
       }
@@ -89,7 +90,7 @@ const appRoutes: Routes = [
         After clicking on the \'Break\' action below go to the \'products\' area and refresh several times. You\'ll see \
         how half of the proeucts have quantity set to \'-1\'. \
         You can also use: curl\ -k {{ baseUrl }}/api/products',
-        image: 'circuit-breaker-break.png',
+        image: 'circuit-breaker-2-break.png',
         actionText: 'Break', actionUrl: 'istio/circuit-breaker-2-break'
       },
       fix: {
@@ -134,10 +135,13 @@ const appRoutes: Routes = [
     component: ScenarioComponent,
     data: {
       title: 'Header Routing',
-      description: 'Blah',
+      description: 'Route traffic to one or another destionation using an HTTP header',
       command: {
-        title: 'Setting routing by version header', subTitle: '',
-        description: 'This command...',
+        title: 'Setting routing by version header \'msa-version\' ', subTitle: '',
+        description: 'When you click \'Execute\' below, \'version 2.0.0\' of the \'inventory\' service will be scaled up to 1 POD, \
+        the virtual service and the destination rule for the mentioned service will be updated to: 1) define a new destionation for \
+        the new version and 2) a routing rule is defined in the virtual service so that only if header \'msa-version\' is \'v2\' traffic \
+        will be routed to \'inventory-v2\'.',
         image: 'header-routing.png',
         actionText: 'Execute', actionUrl: 'istio/header-routing'
       }
