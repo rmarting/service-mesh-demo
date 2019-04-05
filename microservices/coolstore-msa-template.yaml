@@ -716,19 +716,16 @@ objects:
         kind: ImageStreamTag
         name: web-ui:latest
     source:
-      #contextDir: microservices/web-ui
-      contextDir: .
+      contextDir: microservices/web-ui
       git:
-        #ref: ${GIT_REF}
-        #uri: ${GIT_URI}
-        ref: master
-        uri: https://github.com/cvicens/coolstore-ng
+        ref: ${GIT_REF}
+        uri: ${GIT_URI}
       type: Git
     strategy:
       sourceStrategy:
         from:
           kind: ImageStreamTag
-          name: nodejs:8
+          name: nodejs:10
           namespace: ${IMAGE_STREAM_NAMESPACE}
       type: Source
     triggers:

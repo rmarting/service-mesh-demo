@@ -90,8 +90,8 @@ app.get('/istio/default', async function(req, res) {
   }
 });
 
-const port = process.env.PORT || process.env.SCENARIOS_PORT || 8080;
-const host = process.env.IP || process.env.SCENARIOS_HOST || '0.0.0.0';
+const port = process.env.PORT || process.env.SCENARIOS_CUSTOM_PORT || 8080;
+const host = process.env.IP || process.env.SCENARIOS_CUSTOM_HOST || '0.0.0.0';
 const server = app.listen(port, host, function() {
   console.log("App started at: " + new Date() + " on port: " + port);
 });
