@@ -1,0 +1,35 @@
+.scenario-content {
+    height: 420px;
+}
+
+.tab-content {
+    max-height: 300px;
+    max-width: 100%;
+    margin-bottom: 0px;
+}
+
+img.tab-content {
+    max-height: 350px;
+    max-width: 100%;
+    margin: auto;
+    display: block;
+}
+
+img-command {
+    max-height: 600px;
+    max-width: 500px;
+    margin: auto;
+    display: block;
+}
+
+img-break-fix {
+    max-height: 600px;
+    max-width: 500px;
+    margin: auto;
+    display: block;
+}
+
+.center {
+    margin: auto;
+    padding: 5px;
+  }

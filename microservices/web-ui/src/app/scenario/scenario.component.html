@@ -1,11 +1,8 @@
 <h1>{{ title }}</h1>
 <h2>{{ description }}</h2>
 
-<br/>
-
 <div class="row" *ngIf="actionResult">
   <div class="col-sm-12">
-    <div class="form-group">
       <pfng-inline-notification
           [header]="notificationHeader"
           [message]="notificationMessage"
@@ -14,14 +11,14 @@
           [hidden]="notificationHidden"
           (hiddenChange)="handleNofiticationHidden($event)">
       </pfng-inline-notification>
-    </div>
   </div>
 </div>
+
 
 <div class="container-fluid pfng-fluid-width-container">
   <div class="row row-cards-pf">
     <div class="col-sm-12" *ngIf="command">
-      <pfng-card [config]="command.config"
+      <!--<pfng-card [config]="command.config"
                  (onActionSelect)="handleActionSelect($event)">
           <div class="scenario-content">
             <p [innerHTML]="command.description"></p>
@@ -32,10 +29,17 @@
             <div *ngIf="activeTab == 'diagram'"><img class="tab-content img-responsive center" src="/assets/img/{{ command.image }}"></div>
             <div *ngIf="activeTab == 'cheat-sheet'"><p class="tab-content">Cheat Sheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeetttttt</p></div>
           </div>
-      </pfng-card>
+      </pfng-card>-->
+      <app-scenario-card 
+        [config]="command.config" 
+        [description]="command.description" 
+        [image]="command.image" 
+        [cheatSheet]="command.cheatSheet"
+        (actionSelect)="handleActionSelect($event)">
+      </app-scenario-card>
     </div>
     <div class="col-sm-6" *ngIf="break">
-      <pfng-card [config]="break.config"
+      <!--<pfng-card [config]="break.config"
                  (onActionSelect)="handleActionSelect($event)">
           <div class="scenario-content">
           <p [innerHTML]="break.description"></p>
@@ -45,6 +49,7 @@
           </ul>
           <div *ngIf="activeTab == 'diagram'"><img class="tab-content img-responsive center" src="/assets/img/{{ break.image }}"></div>
           <div *ngIf="activeTab == 'cheat-sheet'"><p class="tab-content">Cheat Sheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeetttttt</p></div>
+          -->
           <!--<div class="cheat-sheet">
               <span class="dropdown primary-action" dropdown>
                   <a class="dropdown-toggle" dropdownToggle>Cheat sheet</a>
@@ -53,11 +58,18 @@
                   </ul>
                 </span>
           </div>-->
-        </div>
-      </pfng-card>
+        <!--</div>
+      </pfng-card>-->
+      <app-scenario-card 
+        [config]="break.config" 
+        [description]="break.description" 
+        [image]="break.image" 
+        [cheatSheet]="break.cheatSheet"
+        (actionSelect)="handleActionSelect($event)">
+      </app-scenario-card>
     </div>
     <div class="col-sm-6" *ngIf="fix">
-      <pfng-card [config]="fix.config"
+      <!--<pfng-card [config]="fix.config"
                  (onActionSelect)="handleActionSelect($event)">
           <div class="scenario-content">
           <p [innerHTML]="fix.description"></p>
@@ -68,7 +80,14 @@
           <div *ngIf="activeTab == 'diagram'"><img class="tab-content img-responsive center" src="/assets/img/{{ fix.image }}"></div>
           <div *ngIf="activeTab == 'cheat-sheet'"><p class="tab-content">Cheat Sheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeetttttt</p></div>
           </div>
-      </pfng-card>
+      </pfng-card>-->
+      <app-scenario-card 
+        [config]="fix.config" 
+        [description]="fix.description" 
+        [image]="fix.image" 
+        [cheatSheet]="fix.cheatSheet"
+        (actionSelect)="handleActionSelect($event)">
+      </app-scenario-card>
     </div>
   </div>
 </div>

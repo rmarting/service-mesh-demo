@@ -1,0 +1,12 @@
+<pfng-card [config]="config"
+           (onActionSelect)="handleActionSelect($event)">
+    <div class="scenario-content">
+      <p [innerHTML]="description"></p>
+      <ul class="nav nav-tabs">
+        <li [className]="activeTab == 'diagram' ? 'active' : ''"><a (click)="setActiveTab('diagram')">Diagram</a></li>
+        <li [className]="activeTab == 'cheat-sheet' ? 'active' : ''"><a (click)="setActiveTab('cheat-sheet')">Cheat Sheet</a></li>
+      </ul>
+      <div *ngIf="activeTab == 'diagram'"><img class="tab-content img-responsive center" src="/assets/img/{{ image }}"></div>
+      <div *ngIf="activeTab == 'cheat-sheet'"><p class="tab-content">Cheat Sheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeetttttt</p></div>
+    </div>
+</pfng-card>

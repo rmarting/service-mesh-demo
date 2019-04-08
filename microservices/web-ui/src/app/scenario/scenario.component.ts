@@ -113,7 +113,7 @@ export class ScenarioComponent implements OnInit {
   }
 
   handleActionSelect($event: CardAction): void {
-    console.log($event.hypertext, $event.id);
+    console.log('scenario.handleActionSelect', $event.hypertext, $event.id);
 
     if (!this.scenariosServiceReady) {
       console.error('WAIT!!!');

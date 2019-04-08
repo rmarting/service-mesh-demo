@@ -24,6 +24,7 @@ import { ScenarioComponent } from './scenario/scenario.component';
 import { ScenariosService } from 'src/app/services/scenarios.service';
 import { ProductsService } from 'src/app/services/products.service';
 import { NotificationsService } from 'src/app/services/notifications.service';
+import { ScenarioCardComponent } from './scenario-card/scenario-card.component';
 
 const appRoutes: Routes = [
   { path: 'products', component: ProductsComponent },
@@ -169,7 +170,8 @@ const appRoutes: Routes = [
     AppComponent,
     MainComponent,
     ProductsComponent,
-    ScenarioComponent
+    ScenarioComponent,
+    ScenarioCardComponent
   ],
   imports: [
     ApplicationLauncherModule,
