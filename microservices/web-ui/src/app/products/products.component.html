@@ -3,9 +3,10 @@
 <div style="height: 100vh; width: 100%; position:relative;">
 <div style="max-height:90vh;overflow:auto;">
 <div class="alert alert-info" style="margin-left: 10px; margin-right: 10px;">
-  <span class="pficon pficon-info"></span>
-  This just to refresh the list of products. <a (click)="refresh($event)" class="alert-link">Click here to refresh.</a>
-  {{products.length}} products retreived. {{ errorMessage }}
+  <span [className]="loading ? 'pficon spinner' : 'pficon pficon-info'"></span>
+  <a (click)="refresh($event)" class="alert-link">Click here to refresh.</a>
+  <span *ngIf="showRefreshReport()"><strong> {{products.length}} products</strong> retrieved.
+  Last refresh time was: <strong>{{getRefreshTime()}} seconds</strong></span>
 </div>
 <pfng-toast-notification-list
   [notifications]="getNotifications()"
@@ -13,6 +14,7 @@
   (onViewingChange)="handleViewingChange($event)"
   [showClose]="false">
 </pfng-toast-notification-list>
+
 <div class="col-sm-4"  *ngFor="let product of products; let i = index">    
   <pfng-card class="custom-card" [config]="config" [headerTemplate]="spacesHeaderTemplate">
     <ng-template #spacesHeaderTemplate>

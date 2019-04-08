@@ -57,13 +57,15 @@ const appRoutes: Routes = [
         description: 'In this scenario we\'re going to invoke a URL within the \'catalog\' service that breaks it. \
         There are 2 PODs but the \'break\' action only breaks one at random adding a delay (5s) to the response. \
         After clicking on the \'Break\' action below go to the \'products\' area and refresh several times. One out of \
-        two will return in about 5s. \
-        You can also use: curl\ -k {{ baseUrl }}/api/products ',
+        two will return in about 5s.',
         image: 'circuit-breaker-1-break.png',
+        cheatSheet: [
+          'curl\ -k {{ baseUrl }}/api/products'
+        ],
         actionText: 'Break', actionUrl: 'istio/circuit-breaker-1-break'
       },
       fix: {
-        title: 'Fix it by using a retry policy', subTitle: '',
+        title: 'Fix it by setting a predefined timeout', subTitle: '',
         description: 'This fix sets a timeout for requests to the \'catalog\' service of 2s \
         (https://istio.io/docs/tasks/traffic-management/request-timeouts/) in the Virtual Service. This way instead of freezing \
         for an undefined amount of time, if our request hit the broken POD the wating time will be 2s max.',
@@ -84,13 +86,15 @@ const appRoutes: Routes = [
       break: {
         title: 'Break the \'Inventory\' service',
         subTitle: '',
-        description: 'In this scenario we\'re going to invoke a URL within the \'inventory\' service that breaks it. \
-        There are 2 PODs but the \'break\' action only breaks one at random generating an exception 5xx everytime \
-        /api/inventory/id is\'s involked. \
+        description: 'In this scenario we\'re going to invoke a URL within the <strong>\'inventory\' service</strong> that breaks it. \
+        There are 2 PODs but the <strong>\'break\'</strong> action only breaks one at random generating an exception 5xx everytime \
+        <strong>/api/inventory/id</strong> is\'s invoked. \
         After clicking on the \'Break\' action below go to the \'products\' area and refresh several times. You\'ll see \
-        how half of the proeucts have quantity set to \'-1\'. \
-        You can also use: curl\ -k {{ baseUrl }}/api/products',
+        how half the products have <strong>quantity \'-1\'</strong>.',
         image: 'circuit-breaker-2-break.png',
+        cheatSheet: [
+          'You can also use: curl\ -k {{ baseUrl }}/api/products'
+        ],
         actionText: 'Break', actionUrl: 'istio/circuit-breaker-2-break'
       },
       fix: {

@@ -30,15 +30,18 @@ const data = [
   styleUrls: ['./products.component.css']
 })
 export class ProductsComponent implements OnInit {
+  loading = false;
+  refreshStartTime = -1;
+  refreshStopTime = -1;
   config: CardConfig;
-
   products: Product[];
-
   httpRuntimeException: HttpRuntimeException;
 
   constructor(private productsService: ProductsService, private notificationsService: NotificationsService) {
     console.log('ProductsComponent');
     this.productsService.products.subscribe(payload => {
+      this.loading = false;
+      this.refreshStopTime = Date.now();
       console.log('payload', payload);
       if (Array.isArray(payload)) {
         this.products = payload;
@@ -56,6 +59,14 @@ export class ProductsComponent implements OnInit {
     return this.notificationsService.notifications;
   }
 
+  showRefreshReport() {
+    return !this.loading && this.refreshStartTime > 0 && this.refreshStopTime > this.refreshStartTime;
+  }
+
+  getRefreshTime() {
+    return ((this.refreshStopTime - this.refreshStartTime) / 1000).toFixed(2);
+  }
+
   ngOnInit() {
     console.log('ngOnInit');
     this.config = {
@@ -65,6 +76,8 @@ export class ProductsComponent implements OnInit {
   }
 
   refresh($event: any) {
+    this.loading = true;
+    this.refreshStartTime = Date.now();
     this.productsService.getProducts();
   }
 

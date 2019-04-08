@@ -18,6 +18,8 @@ export class ScenarioComponent implements OnInit {
   config: Config;
   baseUrl: string;
 
+  activeTab = 'diagram';
+
   scenariosServiceReady: boolean;
 
   title: string;
@@ -97,6 +99,10 @@ export class ScenarioComponent implements OnInit {
     }
   }
 
+  setActiveTab(activeTab: string) {
+    this.activeTab = activeTab;
+  }
+
   handleNofiticationHidden($event: any): void {
     this.notificationHidden = $event;
   }
@@ -118,8 +124,9 @@ export class ScenarioComponent implements OnInit {
       .subscribe(
         (result: GenericResult) => {
           this.actionResult = result;
+
           this.notificationHeader = this.actionResult.success ? 'SUCCESS' : 'ERROR';
-          this.notificationMessage = this.actionResult.success ? 'Action executed successfully' : this.actionResult.description;
+          this.notificationMessage = this.actionResult.success ? 'Action executed successfully' : this.actionResult.error.message;
           this.notificationType = this.actionResult.success ? NotificationType.SUCCESS : NotificationType.DANGER;
           this.notificationHidden = false;
         },
