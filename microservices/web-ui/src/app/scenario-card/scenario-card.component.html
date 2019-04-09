@@ -6,7 +6,14 @@
         <li [className]="activeTab == 'diagram' ? 'active' : ''"><a (click)="setActiveTab('diagram')">Diagram</a></li>
         <li [className]="activeTab == 'cheat-sheet' ? 'active' : ''"><a (click)="setActiveTab('cheat-sheet')">Cheat Sheet</a></li>
       </ul>
-      <div *ngIf="activeTab == 'diagram'"><img class="tab-content img-responsive center" src="/assets/img/{{ image }}"></div>
-      <div *ngIf="activeTab == 'cheat-sheet'"><p class="tab-content">Cheat Sheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeetttttt</p></div>
+      <div *ngIf="activeTab == 'diagram'">
+        <img class="tab-content img-responsive center" src="/assets/img/{{ image }}">
+      </div>
+      <div *ngIf="activeTab == 'cheat-sheet'">
+        <p *ngIf="cheatSheet?.length > 0">Use next commands to run tests before/after executing the action:</p>
+        <div class="tab-content row"  *ngFor="let line of cheatSheet; let i = index">
+          <pre >{{ line }}</pre>
+        </div>
+      </div>
     </div>
 </pfng-card>

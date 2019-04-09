@@ -55,24 +55,27 @@ const appRoutes: Routes = [
         title: 'Break the \'Catalog\' service',
         subTitle: '',
         // description: 'This action breaks the code in one of the PODs of the catalog service, you can check the logs of the container',
-        description: 'In this scenario we\'re going to invoke a URL within the \'catalog\' service that breaks it. \
-        There are 2 PODs but the \'break\' action only breaks one at random adding a delay (5s) to the response. \
-        After clicking on the \'Break\' action below go to the \'products\' area and refresh several times. One out of \
-        two will return in about 5s.',
+        description: 'In this scenario <strong>we\'re going to invoke a URL within the <code>\'catalog\'</code> service to \
+        breaks it.</strong>  \
+        There are <strong>2 PODs</strong> but <strong>the \'Break\' action only breaks only one</strong> (at random), \
+        <strong>adding a delay (5s) to the response</strong>. \
+        <em>After clicking on the <code>\'Break\'</code> action below go to the <code>\'products\'</code> area and refresh \
+        several times. <strong>One out of two will return in about 5s</strong></em>.',
         image: 'circuit-breaker-1-break.png',
         cheatSheet: [
-          'curl\ -k {{ baseUrl }}/api/products'
+          'time curl\ -k {{ baseUrl }}/api/products'
         ],
         actionText: 'Break', actionUrl: 'istio/circuit-breaker-1-break'
       },
       fix: {
         title: 'Fix it by setting a predefined timeout', subTitle: '',
-        description: 'This fix sets a timeout for requests to the \'catalog\' service of 2s \
-        (https://istio.io/docs/tasks/traffic-management/request-timeouts/) in the Virtual Service. This way instead of freezing \
-        for an undefined amount of time, if our request hit the broken POD the wating time will be 2s max.',
+        description: '<strong>This fix sets a <a href="https://istio.io/docs/tasks/traffic-management/request-timeouts/">timeout</a>\
+        </strong> for requests to the \'catalog\' service <strong>of 2s</strong> \
+        in the <code>\'catalog\'</code> <strong>Virtual Service</strong>. <strong>This way</strong> instead of freezing \
+        for an undefined amount of time, if our request hit the broken POD <strong>the wating time will be 2s max</strong>.',
         image: 'circuit-breaker-1-fix.png',
         cheatSheet: [
-          ''
+          'time curl\ -k {{ baseUrl }}/api/products'
         ],
         actionText: 'Fix', actionUrl: 'istio/circuit-breaker-1-fix'
       }
@@ -87,26 +90,28 @@ const appRoutes: Routes = [
       break: {
         title: 'Break the \'Inventory\' service',
         subTitle: '',
-        description: 'In this scenario we\'re going to invoke a URL within the <strong>\'inventory\' service</strong> that breaks it. \
-        There are 2 PODs but the <strong>\'break\'</strong> action only breaks one at random generating an exception 5xx everytime \
-        <strong>/api/inventory/id</strong> is\'s invoked. \
-        After clicking on the \'Break\' action below go to the \'products\' area and refresh several times. You\'ll see \
-        how half the products have <strong>quantity \'-1\'</strong>.',
+        description: 'In this scenario <strong>we\'re going to invoke a URL within the <code>\'inventory\'</code> service to \
+        breaks it.</strong> \
+        There are <strong>2 PODs</strong> but <strong>the <code>\'Break\'</code> action only breaks only one</strong> (at random), \
+        <strong>generating an exception 5xx everytime <code>/api/inventory/id</code> is\'s invoked</strong>.<br> \
+        <em>After clicking on the <code>\'Break\'</code> action below go to the \'products\' area and refresh several times</em>. \
+        <em>You\'ll see how half the products have <strong>quantity = \'-1\'</strong></em>.',
         image: 'circuit-breaker-2-break.png',
         cheatSheet: [
-          'You can also use: curl\ -k {{ baseUrl }}/api/products'
+          '$ curl\ -k {{ baseUrl }}/api/products'
         ],
         actionText: 'Break', actionUrl: 'istio/circuit-breaker-2-break'
       },
       fix: {
         title: 'Fix it by using an outlier traffic policy', subTitle: '',
-        description: 'This fix uses the Cirtuit Breaker pattern by applying an outlier detection policy. After applying the \
-        fix, go back to the \'products\' area and refresh, after refreshing a couple of times you should see no errors. You can \
-        always look at the \'envoy\' stats.',
+        description: 'This fix uses the <strong>Cirtuit Breaker</strong> pattern by applying an <strong>outlier detection \
+        policy</strong>.<br> \
+        <em>After applying the fix, go back to the <code>\'products\'</code> area and refresh, after refreshing \
+        a couple of times you should see no errors. You can always look at the <code>\'envoy\'</code> stats (see Cheat Sheet)</em>.',
         image: 'circuit-breaker-2-fix.png',
         cheatSheet: [
-          'export INVENTORY_POD=$(oc get pod -n coolstore | grep inventory | grep Running | awk \'NR == 1 {print $1}\')',
-          'oc exec $GW_POD -c istio-proxy -n coolstore curl http://localhost:15000/stats | grep ejection'
+          '$ export INVENTORY_POD=$(oc get pod -n coolstore | grep inventory | grep Running | awk \'NR == 1 {print $1}\')',
+          '$ oc exec $INVENTORY_POD_POD -c istio-proxy -n coolstore curl http://localhost:15000/stats | grep ejection'
         ],
         actionText: 'Fix', actionUrl: 'istio/circuit-breaker-2-fix'
       }
@@ -143,11 +148,19 @@ const appRoutes: Routes = [
       description: 'Route traffic to one or another destionation using an HTTP header',
       command: {
         title: 'Setting routing by version header \'msa-version\' ', subTitle: '',
-        description: 'When you click \'Execute\' below, \'version 2.0.0\' of the \'inventory\' service will be scaled up to 1 POD, \
-        the virtual service and the destination rule for the mentioned service will be updated to: 1) define a new destionation for \
-        the new version and 2) a routing rule is defined in the virtual service so that only if header \'msa-version\' is \'v2\' traffic \
-        will be routed to \'inventory-v2\'.',
+        description: '<strong>When you click \'Execute\'</strong> below, <strong>\'version 2.0.0\'</strong> of the \
+        <strong>\'inventory\'</strong> service <strong>will be scaled up to 1 POD</strong>, \
+        the <strong>virtual service and the destination rule</strong> for the mentioned service will be updated to: \
+        <ol><li>To define a <strong>new destination for the new version</strong></li> \
+        <li>To define a <strong>routing rule in the virtual service</strong> so that only <strong>if header \'msa-version\' \
+        is \'v2\'</strong> traffic will be <strong>routed to \'inventory-v2\'</strong> and you\'ll see \
+        <strong>"discount" : 0.2</strong></li>\
+        <ol>',
         image: 'header-routing.png',
+        cheatSheet: [
+          '$ curl\ -k -H \'msa-version: v1\' {{ baseUrl }}/api/products\n  ...\n     "quantity" : 53\n   }\n }\n]',
+          '$ curl\ -k -H \'msa-version: v2\' {{ baseUrl }}/api/products\n  ...\n     "quantity" : 53\n   },\n   "discount" : 0.2\n }\n]'
+        ],
         actionText: 'Execute', actionUrl: 'istio/header-routing'
       }
     }

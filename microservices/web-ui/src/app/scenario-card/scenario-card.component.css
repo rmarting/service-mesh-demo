@@ -1,11 +1,14 @@
 .scenario-content {
-    height: 420px;
+    height: 430px;
 }
 
 .tab-content {
     max-height: 300px;
     max-width: 100%;
     margin-bottom: 0px;
+    margin-top: 10px; 
+    margin-left: 0px; 
+    margin-right: 0px; 
 }
 
 img.tab-content {

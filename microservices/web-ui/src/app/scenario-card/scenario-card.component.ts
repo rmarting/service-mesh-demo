@@ -28,5 +28,6 @@ export class ScenarioCardComponent implements OnInit {
 
   setActiveTab(activeTab: string) {
     this.activeTab = activeTab;
+    console.log('cheatSheet', this.cheatSheet);
   }
 }

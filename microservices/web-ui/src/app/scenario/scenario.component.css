@@ -1,3 +1,15 @@
+.title {
+    margin-top: 0px;
+}
+
+.description {
+    margin-top: 10px;
+}
+
+.alert {
+    margin-bottom: 10px;
+}
+
 .container-fluid,
 .row-fluid { height: inherit; }
 

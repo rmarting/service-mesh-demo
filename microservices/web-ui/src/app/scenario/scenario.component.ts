@@ -17,6 +17,7 @@ import { Config } from '../model/config.model';
 export class ScenarioComponent implements OnInit {
   config: Config;
   baseUrl: string;
+  loading = false;
 
   activeTab = 'diagram';
 
@@ -59,10 +60,42 @@ export class ScenarioComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.geData();
+    this.getData();
   }
 
-  geData(): void {
+  notificationIconClass() {
+    if (this.loading) {
+      return 'pficon spinner';
+    }
+
+    if (this.actionResult) {
+      if (this.actionResult.success) {
+        return 'pficon pficon-ok';
+      } else {
+        return 'pficon pficon-error-circle-o';
+      }
+    }
+
+    return 'pficon pficon-info';
+  }
+
+  notificationClass() {
+    if (this.loading) {
+      return 'alert alert-info';
+    }
+
+    if (this.actionResult) {
+      if (this.actionResult.success) {
+        return 'alert alert-success';
+      } else {
+        return 'alert alert-danger';
+      }
+    }
+
+    return 'alert alert-info';
+  }
+
+  getData(): void {
     this.title = this.route.snapshot.data.title;
     this.description = this.route.snapshot.data.description;
 
@@ -70,30 +103,33 @@ export class ScenarioComponent implements OnInit {
       this.command = new ActionCard(
         this.route.snapshot.data.command.title,
         this.route.snapshot.data.command.subTitle,
-        this.processDescription(this.route.snapshot.data.command.description),
+        this.processLine(this.route.snapshot.data.command.description),
         this.route.snapshot.data.command.image,
         this.route.snapshot.data.command.actionText,
-        this.route.snapshot.data.command.actionUrl
+        this.route.snapshot.data.command.actionUrl,
+        this.processLines(this.route.snapshot.data.command.cheatSheet)
       );
     } else {
       if (this.route.snapshot.data.break) {
         this.break = new ActionCard(
           this.route.snapshot.data.break.title,
           this.route.snapshot.data.break.subTitle,
-          this.processDescription(this.route.snapshot.data.break.description),
+          this.processLine(this.route.snapshot.data.break.description),
           this.route.snapshot.data.break.image,
           this.route.snapshot.data.break.actionText,
-          this.route.snapshot.data.break.actionUrl
+          this.route.snapshot.data.break.actionUrl,
+          this.processLines(this.route.snapshot.data.break.cheatSheet)
         );
       }
       if (this.route.snapshot.data.fix) {
         this.fix = new ActionCard(
           this.route.snapshot.data.fix.title,
           this.route.snapshot.data.fix.subTitle,
-          this.processDescription(this.route.snapshot.data.fix.description),
+          this.processLine(this.route.snapshot.data.fix.description),
           this.route.snapshot.data.fix.image,
           this.route.snapshot.data.fix.actionText,
-          this.route.snapshot.data.fix.actionUrl
+          this.route.snapshot.data.fix.actionUrl,
+          this.processLines(this.route.snapshot.data.fix.cheatSheet)
         );
       }
     }
@@ -107,7 +143,14 @@ export class ScenarioComponent implements OnInit {
     this.notificationHidden = $event;
   }
 
-  processDescription(description: string) {
+  processLines(lines: string[]) {
+    if (lines) {
+      return lines.map(line => this.processLine(line));
+    }
+    return null;
+  }
+
+  processLine(description: string) {
     const re = /{{\s*baseUrl\s*}}/gi;
     return description.replace(re, this.baseUrl);
   }
@@ -116,13 +159,15 @@ export class ScenarioComponent implements OnInit {
     console.log('scenario.handleActionSelect', $event.hypertext, $event.id);
 
     if (!this.scenariosServiceReady) {
-      console.error('WAIT!!!');
+      alert('WAIT!!!');
       return;
     }
 
+    this.loading = true;
     this.scenariosService.runAction($event.id)
       .subscribe(
         (result: GenericResult) => {
+          this.loading = false;
           this.actionResult = result;
 
           this.notificationHeader = this.actionResult.success ? 'SUCCESS' : 'ERROR';
@@ -131,6 +176,7 @@ export class ScenarioComponent implements OnInit {
           this.notificationHidden = false;
         },
         error => {
+          this.loading = false;
           this.actionResult = { success: false, description: error.message } as GenericResult;
           this.notificationHeader = 'ERROR';
           this.notificationMessage = this.actionResult.description;
@@ -149,13 +195,15 @@ class ActionCard {
   image: string;
   actionText: string;
   actionUrl: string;
+  cheatSheet: string[];
   constructor(
     title: string,
     subTitle: string,
     description: string,
     image: string,
     actionText: string,
-    actionUrl: string
+    actionUrl: string,
+    cheatSheet: string[]
     ) {
       this.title = title;
       this.subTitle = subTitle;
@@ -163,6 +211,7 @@ class ActionCard {
       this.image = image;
       this.actionText = actionText;
       this.actionUrl = actionUrl;
+      this.cheatSheet = cheatSheet;
       this.config = {
         action: {
           id: actionUrl,

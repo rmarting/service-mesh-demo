@@ -1,19 +1,10 @@
-<h1>{{ title }}</h1>
-<h2>{{ description }}</h2>
+<h2 class="title">{{ title }}</h2>
+<h3 class="description">{{ description }}</h3>
 
-<div class="row" *ngIf="actionResult">
-  <div class="col-sm-12">
-      <pfng-inline-notification
-          [header]="notificationHeader"
-          [message]="notificationMessage"
-          [dismissable]="true"
-          [type]="notificationType"
-          [hidden]="notificationHidden"
-          (hiddenChange)="handleNofiticationHidden($event)">
-      </pfng-inline-notification>
-  </div>
+<div [className]="notificationClass()">
+  <span [className]="notificationIconClass()"></span>
+  <span><strong>{{ notificationHeader }}</strong> {{ notificationMessage }}</span>
 </div>
-
 
 <div class="container-fluid pfng-fluid-width-container">
   <div class="row row-cards-pf">
