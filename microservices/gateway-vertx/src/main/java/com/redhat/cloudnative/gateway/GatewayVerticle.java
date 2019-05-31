@@ -25,10 +25,6 @@ public class GatewayVerticle extends AbstractVerticle {
 
     @Override
     public void start() {
-        // Circuit Breaker Definition
-        //circuit = CircuitBreaker.create("inventory-circuit-breaker", vertx, new CircuitBreakerOptions()
-        //        .setFallbackOnFailure(false).setMaxFailures(1000000).setResetTimeout(1).setTimeout(60000));
-
         Router router = Router.router(vertx);
         router.route().handler(CorsHandler.create("*").allowedMethod(HttpMethod.GET));
         router.get("/health").handler(ctx -> ctx.response().end(new JsonObject().put("status", "UP").toString()));
@@ -76,7 +72,7 @@ public class GatewayVerticle extends AbstractVerticle {
                     .putHeader(END_USER, user)
                     .rxSend()
                     .map(resp -> {
-                        LOG.debug("Resp for {}: status code {}", product.getString("itemId"), (0 + resp.statusCode()));
+                        LOG.info("Resp for {}: status code {}", product.getString("itemId"), (0 + resp.statusCode()));
                         if (resp.statusCode() == 200 && resp.getHeader("content-type").contains("application/json")) {
                             // Decode the body as a json object
                             JsonObject newProduct = product.copy().put("availability", new JsonObject().put("quantity", resp.bodyAsJsonObject().getInteger("quantity")));
