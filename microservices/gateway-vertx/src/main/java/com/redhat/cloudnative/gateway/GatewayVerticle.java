@@ -7,6 +7,7 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.rxjava.core.AbstractVerticle;
 import io.vertx.rxjava.ext.web.Router;
 import io.vertx.rxjava.ext.web.RoutingContext;
@@ -35,8 +36,8 @@ public class GatewayVerticle extends AbstractVerticle {
             .listen(Integer.getInteger("http.port", config().getInteger("HTTP_PORT", 8080)));
 
         // Simple Web Clients to invoke other microservices
-        catalog = WebClient.create(vertx);
-        inventory = WebClient.create(vertx);
+        catalog = WebClient.create(vertx, new WebClientOptions().setFollowRedirects(false));
+        inventory = WebClient.create(vertx, new WebClientOptions().setFollowRedirects(false));
     }
 
     private void products(RoutingContext rc) {
