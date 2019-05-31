@@ -1,31 +1,18 @@
 package com.redhat.cloudnative.gateway;
 
-import io.vertx.circuitbreaker.CircuitBreakerOptions;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.client.WebClientOptions;
-import io.vertx.rxjava.circuitbreaker.CircuitBreaker;
 import io.vertx.rxjava.core.AbstractVerticle;
 import io.vertx.rxjava.ext.web.Router;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import io.vertx.rxjava.ext.web.client.WebClient;
-import io.vertx.rxjava.ext.web.codec.BodyCodec;
 import io.vertx.rxjava.ext.web.handler.CorsHandler;
-
-import java.util.function.Function;
-
-import javax.management.RuntimeErrorException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import rx.Observable;
-import rx.Single;
-import rx.Subscription;
 
 public class GatewayVerticle extends AbstractVerticle {
     private static final String MSA_VERSION = "msa-version";
