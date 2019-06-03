@@ -48,6 +48,7 @@ export class ScenarioComponent implements OnInit {
         if (config) {
           this.config = config;
           this.baseUrl = this.config.API_ENDPOINT;
+          this.getData();
         }
       });
 

@@ -411,7 +411,9 @@ objects:
     - apps.openshift.io
     resources:
     - deploymentconfigs
+    - deploymentconfigs/status
     verbs:
+    - get
     - patch
   - apiGroups:
     - networking.istio.io
@@ -598,7 +600,7 @@ objects:
             - name: COOLSTORE_GW_ENDPOINT
               value: ${COOLSTORE_GW_ENDPOINT}
             - name: COOLSTORE_SCENARIOS_ENDPOINT
-              value: ${COOLSTORE_SCENARIOS_ENDPOINT}
+              value: "NEED VALUE!!!"
           ports:
           - containerPort: 8080
             name: http
@@ -934,8 +936,4 @@ parameters:
 - description: Ingress Gateway Endpoint
   displayName: Ingress Gateway Endpoint
   name: COOLSTORE_GW_ENDPOINT
-  required: true
-- description: Istio Scenarios API Endpoint
-  displayName: Istio Scenarios API Endpoint
-  name: COOLSTORE_SCENARIOS_ENDPOINT
   required: true

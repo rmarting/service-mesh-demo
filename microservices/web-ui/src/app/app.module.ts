@@ -111,7 +111,7 @@ const appRoutes: Routes = [
         image: 'circuit-breaker-2-fix.png',
         cheatSheet: [
           '$ export INVENTORY_POD=$(oc get pod -n coolstore | grep inventory | grep Running | awk \'NR == 1 {print $1}\')',
-          '$ oc exec $INVENTORY_POD_POD -c istio-proxy -n coolstore curl http://localhost:15000/stats | grep ejection'
+          '$ oc exec $INVENTORY_POD -c istio-proxy -n coolstore curl http://localhost:15000/stats | grep ejection'
         ],
         actionText: 'Fix', actionUrl: 'istio/circuit-breaker-2-fix'
       }

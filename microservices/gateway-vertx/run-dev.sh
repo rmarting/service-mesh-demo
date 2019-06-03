@@ -1,0 +1,1 @@
+mvn vertx:run -Dvertx.config=./dev/application-conf.json

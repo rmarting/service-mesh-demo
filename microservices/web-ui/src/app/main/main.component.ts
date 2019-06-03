@@ -15,36 +15,6 @@ import { NotificationsService } from '../services/notifications.service';
   encapsulation: ViewEncapsulation.None,
   selector: 'app-main',
   styleUrls: ['./main.component.css'],
-  /*styles: [`
-    .faux-layout {
-      position: fixed;
-      top: 37px;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background-color: #f5f5f5;
-      padding-top: 15px;
-      z-index: 1100;
-    }
-    .example-page-container.container-fluid {
-      position: fixed;
-      top: 37px;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background-color: #f5f5f5;
-      padding-top: 15px;
-    }
-
-    .hide-vertical-nav {
-      margin-top: 15px;
-      margin-left: 30px;
-    }
-
-    .navbar-brand-txt {
-      line-height: 34px;
-    }
-  `],*/
   templateUrl: './main.component.html',
 })
 export class MainComponent implements OnInit {
@@ -71,24 +41,20 @@ export class MainComponent implements OnInit {
         iconStyleClass: 'fa fa-shopping-bag',
         url: '/products'
       },
-      /*{
-        title: 'Dolor',
-        iconStyleClass: 'fa fa-shield',
-        url: '/verticalnavigation/dolor',
-        badges: [
-          {
-            count: 1283,
-            tooltip: 'Total number of items'
-          }
-        ]
-      },*/
       {
         title: 'Istio',
         iconStyleClass: 'fa fa-space-shuttle',
         children: [
           {
             title: 'Reset (default)',
-            url: '/scenario/default'
+            url: '/scenario/default',
+            /* badges: [
+              {
+                count: 6,
+                tooltip: 'Total number of error items',
+                iconStyleClass: 'pficon pficon-error-circle-o'
+              }
+            ]*/
           },
           {
             title: 'Header Routing',

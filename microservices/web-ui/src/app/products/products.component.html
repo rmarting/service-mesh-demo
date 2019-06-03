@@ -32,17 +32,13 @@
             <span>
               <h1 class="ng-binding">{{ product.price | currency : 'USD' }}</h1>
             </span>
-            <!-- ngIf: item.product.availability.quantity > 0 -->
             <div ng-if="item.product.availability.quantity > 0" style="float:right" class="ng-scope">
               <label class="label label-warning">{{ product.availability.quantity }} left!</label>
               <a target="_blank" href="">&nbsp;<span class="fa fa-map-marker fa-lg"></span></a>
-            </div><!-- end ngIf: item.product.availability.quantity > 0 -->
+            </div>
     
-            <!-- ngIf: item.product.availability.quantity == 0 -->
           </div>
     
-          
-
           <form class="form-inline ng-pristine ng-valid">
             <div class="form-group">
               <select name="quan" ng-model="item.quantity" class="form-control ng-pristine ng-valid ng-not-empty ng-touched"
