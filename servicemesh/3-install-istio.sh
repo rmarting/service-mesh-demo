@@ -81,7 +81,7 @@ then
   echo "Lets continue..."
   continue
 else
-  if [ "${FLAG}" == 'Installed=True' ]
+  if [[ "${FLAG}" == *'Installed=True'* ]]
   then
   echo "Istio installed correctly"
   break
