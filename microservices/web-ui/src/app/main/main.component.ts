@@ -69,11 +69,6 @@ export class MainComponent implements OnInit {
             url: '/scenario/circuit-breaker-2'
           }
         ]
-      },
-      {
-        title: 'Dashboard',
-        iconStyleClass: 'fa fa-dashboard',
-        url: '/dashboard'
       }
     ];
   }
