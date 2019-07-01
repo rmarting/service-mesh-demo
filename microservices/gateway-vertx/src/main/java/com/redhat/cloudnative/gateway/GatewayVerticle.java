@@ -82,6 +82,12 @@ public class GatewayVerticle extends AbstractVerticle {
                             }
                             return newProduct;
                         } 
+                        else {
+                            //throw new RuntimeException("Invalid response from the catalog: " + resp.statusCode());
+                            throw new HttpRuntimeException(
+                                "Invalid response from the inventary: " + resp.statusCode(),
+                                resp.statusCode());
+                        }
                         LOG.warn("Inventory error for {}: status code {}", product.getString("itemId"), resp.statusCode());
                         return product.copy().put("availability", new JsonObject().put("quantity", -1));
                     })
